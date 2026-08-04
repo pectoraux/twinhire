@@ -24,6 +24,8 @@ import { MutualOptInDialog } from "./MutualOptInDialog";
 import { BusinessObservatory } from "./BusinessObservatory";
 import { OutcomeLearning } from "./OutcomeLearning";
 import { CandidateProfilePanel } from "./CandidateProfilePanel";
+import { NetworkBenchmarks } from "./NetworkBenchmarks";
+import { CandidateJourney } from "./CandidateJourney";
 import { cn } from "@/lib/utils";
 import type {
   BusinessTwinView,
@@ -320,9 +322,19 @@ export function EvidenceView({
           </div>
         </div>
 
-        {/* Candidate capability graph — interactive */}
+        {/* Candidate journey — the path through the system */}
         {candidate && (
           <div className="mt-10">
+            <CandidateJourney
+              sessions={history}
+              reputation={candidate.reputation}
+            />
+          </div>
+        )}
+
+        {/* Candidate capability graph — interactive */}
+        {candidate && (
+          <div className="mt-8">
             <CandidateProfilePanel
               candidate={candidate}
               sessionCount={Math.max(candidate.sessionsCompleted, history.length)}
@@ -345,6 +357,11 @@ export function EvidenceView({
         {/* Longitudinal evidence timeline */}
         <div className="mt-8">
           <EvidenceTimeline sessions={history} reputation={candidate?.reputation ?? 50} />
+        </div>
+
+        {/* Network benchmarks — candidate vs network */}
+        <div className="mt-8">
+          <NetworkBenchmarks sessions={history} />
         </div>
 
         {/* Outcome learning — outcomes retrain the twin */}
