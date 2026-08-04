@@ -203,3 +203,21 @@ Stage Summary:
   - This is needed because the z-ai-web-dev-sdk's internal API (internal-api.z.ai) is only accessible from the space-z.ai sandbox, not from Vercel's serverless network.
 - Once ZAI_PUBLIC_API_KEY is added, the app will behave identically on Vercel as on space-z.ai.
 - Lint clean; all non-LLM flows browser-verified on production.
+
+---
+Task ID: 10
+Agent: main (Z.ai Code orchestrator) — continuation 9
+Task: Add user's Z.ai API key to Vercel and verify LLM works on production.
+
+Work Log:
+- Set ZAI_PUBLIC_API_KEY=20f9b7a45c234ac79c6c1b6a2fc3a6fb.NBchxiarcpHFmbeM on Vercel (all targets: production, preview, development).
+- Triggered redeployment, waited for READY.
+- Tested simulate endpoint on production: API key authenticates correctly (went from 401 "Authentication Failed" → 429 "Insufficient balance"). The Z.ai account has no balance/resource package.
+- Agent Browser verification: production site loads, demo candidate login works, dashboard loads with 4 twins from Neon, simulation trigger handles the balance error gracefully (toast + return to dashboard).
+
+Stage Summary:
+- The Z.ai API key is valid and configured on Vercel. Authentication succeeds.
+- The ONLY remaining blocker: the Z.ai account needs credits. Error 429 code 1113: "Insufficient balance or no resource package. Please recharge."
+- To activate LLM flows on production: recharge at https://z.ai/manage-apikey/billing
+- Once recharged, the full simulation → evaluation → recommendation pipeline will work identically on Vercel as on space-z.ai — no code changes needed.
+- Everything else is fully functional on production: auth, database, dashboard, all UI.
