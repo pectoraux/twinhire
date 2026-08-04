@@ -3,6 +3,7 @@
 import type {
   BusinessTwinView,
   CandidateView,
+  CapabilityBacklogItem,
   CapabilityGap,
   CapabilityNode,
   Kpi,
@@ -20,6 +21,8 @@ type TwinRow = {
   objectives: string
   kpis: string
   capabilities: string
+  capabilityBacklog: string | null
+  capabilitiesIdentified: number | null
   orgSnapshot: string
   fidelity: number
   sessionsObserved: number
@@ -58,6 +61,8 @@ export function mapTwin(r: TwinRow): BusinessTwinView {
     objectives: safeParse<string[]>(r.objectives, []),
     kpis: safeParse<Kpi[]>(r.kpis, []),
     capabilities: safeParse<CapabilityGap[]>(r.capabilities, []),
+    capabilityBacklog: safeParse<CapabilityBacklogItem[]>(r.capabilityBacklog, []),
+    capabilitiesIdentified: r.capabilitiesIdentified ?? 0,
     orgSnapshot: safeParse(r.orgSnapshot, {
       departments: [],
       techStack: [],

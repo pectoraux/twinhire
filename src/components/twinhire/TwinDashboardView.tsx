@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight,
   Building2,
+  ChevronDown,
   CircleDashed,
   Compass,
   Cpu,
@@ -19,6 +20,7 @@ import { CategoryBadge, FidelityRing, ScoreBar, TrendPill, LiveDot } from "./pri
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 import type { BusinessTwinView, CapabilityGap } from "@/lib/twinhire/types";
 
 export function TwinDashboardView({
@@ -224,7 +226,7 @@ export function TwinDashboardView({
             </div>
             <div className="hidden items-center gap-2 rounded-full border border-border/60 bg-card px-3 py-1.5 text-xs text-muted-foreground sm:flex">
               <ListChecks className="h-3.5 w-3.5" />
-              {ranked.length} gaps surfaced
+              {ranked.length} of {twin.capabilitiesIdentified} identified
             </div>
           </div>
 
@@ -239,6 +241,9 @@ export function TwinDashboardView({
               />
             ))}
           </div>
+
+          {/* Expandable long-tail backlog */}
+          <BacklogList twin={twin} />
         </div>
       </div>
     </div>
@@ -361,6 +366,81 @@ function CapabilityRow({
         </div>
       </div>
     </motion.div>
+  );
+}
+
+function BacklogList({ twin }: { twin: BusinessTwinView }) {
+  const [open, setOpen] = useState(false);
+  const backlog = twin.capabilityBacklog ?? [];
+  const remaining = Math.max(0, twin.capabilitiesIdentified - twin.capabilities.length);
+  if (backlog.length === 0) return null;
+
+  return (
+    <div className="mt-4">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center justify-between rounded-2xl border border-dashed border-border/70 bg-secondary/30 px-5 py-3 text-left transition-colors hover:border-foreground/20 hover:bg-secondary/50"
+        aria-expanded={open}
+      >
+        <span className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+          <Layers3 className="h-4 w-4" />
+          {open ? "Hide" : "View"} {remaining} more identified capabilities
+          <span className="hidden text-xs text-muted-foreground/70 sm:inline">
+            (long-tail, not yet scoped into simulations)
+          </span>
+        </span>
+        <ChevronDown
+          className={cn(
+            "h-4 w-4 text-muted-foreground transition-transform",
+            open && "rotate-180",
+          )}
+        />
+      </button>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="overflow-hidden"
+          >
+            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              {backlog.map((b, i) => (
+                <motion.div
+                  key={b.title}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.03 }}
+                  className="flex items-center justify-between gap-3 rounded-xl border border-border/50 bg-card px-3 py-2.5"
+                >
+                  <div className="flex min-w-0 items-center gap-2.5">
+                    <span className="font-mono text-[10px] text-muted-foreground/60">
+                      {String(twin.capabilities.length + i + 1).padStart(2, "0")}
+                    </span>
+                    <CategoryBadge category={b.category} />
+                    <span className="truncate text-sm">{b.title}</span>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <div className="w-12">
+                      <ScoreBar value={b.expectedRoi} tone="neutral" />
+                    </div>
+                    <span className="w-7 text-right font-mono text-xs text-muted-foreground">
+                      {b.expectedRoi}
+                    </span>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+            <p className="mt-3 text-center text-xs text-muted-foreground/70">
+              The Capability Intelligence Engine continuously surfaces these from
+              the twin&apos;s live data — the top {twin.capabilities.length} are
+              promoted to full simulations as ROI justifies scoping.
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 

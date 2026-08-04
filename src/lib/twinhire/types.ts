@@ -43,6 +43,10 @@ export interface BusinessTwinView {
   objectives: string[]
   kpis: Kpi[]
   capabilities: CapabilityGap[]
+  /// Lightweight items for the "long tail" of identified capabilities (not full gaps)
+  capabilityBacklog: CapabilityBacklogItem[]
+  /// Total count of capabilities the engine has identified for this twin
+  capabilitiesIdentified: number
   orgSnapshot: {
     departments: string[]
     techStack: string[]
@@ -51,6 +55,13 @@ export interface BusinessTwinView {
   }
   fidelity: number
   sessionsObserved: number
+}
+
+/// A lightweight capability identified by the engine but not yet fully scoped into a gap.
+export interface CapabilityBacklogItem {
+  title: string
+  category: CapabilityGap["category"]
+  expectedRoi: number
 }
 
 export interface CapabilityNode {

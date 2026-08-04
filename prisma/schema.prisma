@@ -29,6 +29,10 @@ model BusinessTwin {
   kpis          String
   /// JSON array of capability gaps (CapabilityGap[])
   capabilities  String
+  /// JSON array of lightweight backlog items (CapabilityBacklogItem[])
+  capabilityBacklog String
+  /// Total count of capabilities the engine has identified for this twin
+  capabilitiesIdentified Int @default(0)
   /// JSON object describing org/departments for the twin's "feel"
   orgSnapshot   String
   /// Twin fidelity score 0-100 — improves as outcomes are collected

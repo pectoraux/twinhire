@@ -2,7 +2,7 @@
 // Rich, realistic operational snapshots used to power the simulation.
 
 import { db } from "@/lib/db"
-import type { BusinessTwinView, CandidateView, CapabilityGap, Kpi } from "./types"
+import type { BusinessTwinView, CandidateView, CapabilityBacklogItem, CapabilityGap, Kpi } from "./types"
 
 const TWINS: Omit<BusinessTwinView, "id">[] = [
   {
@@ -43,6 +43,8 @@ const TWINS: Omit<BusinessTwinView, "id">[] = [
     fidelity: 74,
     sessionsObserved: 12,
     capabilities: capabilitySet482(),
+    capabilityBacklog: backlog482(),
+    capabilitiesIdentified: 23,
   },
   {
     code: "TWIN-317",
@@ -82,6 +84,8 @@ const TWINS: Omit<BusinessTwinView, "id">[] = [
     fidelity: 81,
     sessionsObserved: 23,
     capabilities: capabilitySet317(),
+    capabilityBacklog: backlog317(),
+    capabilitiesIdentified: 19,
   },
   {
     code: "TWIN-604",
@@ -121,6 +125,8 @@ const TWINS: Omit<BusinessTwinView, "id">[] = [
     fidelity: 68,
     sessionsObserved: 5,
     capabilities: capabilitySet604(),
+    capabilityBacklog: backlog604(),
+    capabilitiesIdentified: 14,
   },
   {
     code: "TWIN-129",
@@ -160,6 +166,8 @@ const TWINS: Omit<BusinessTwinView, "id">[] = [
     fidelity: 77,
     sessionsObserved: 18,
     capabilities: capabilitySet129(),
+    capabilityBacklog: backlog129(),
+    capabilitiesIdentified: 21,
   },
 ]
 
@@ -540,6 +548,56 @@ function capabilitySet129(): CapabilityGap[] {
   ]
 }
 
+// Long-tail capability backlogs — the engine identifies many more capabilities
+// than it fully scopes. These are shown compactly in the dashboard.
+function backlog482(): CapabilityBacklogItem[] {
+  return [
+    { title: "EU clinical-sales enablement", category: "Operations", expectedRoi: 64 },
+    { title: "Patient-portal accessibility audit", category: "Customer", expectedRoi: 58 },
+    { title: "Refund workflow automation", category: "Operations", expectedRoi: 56 },
+    { title: "Cost-of-care reporting module", category: "Product", expectedRoi: 54 },
+    { title: "Slack-to-ticket triage rules", category: "Knowledge", expectedRoi: 52 },
+    { title: "Trial-to-paid friction audit", category: "Growth", expectedRoi: 50 },
+    { title: "Security questionnaire response library", category: "Knowledge", expectedRoi: 47 },
+    { title: "Contract renewal forecasting", category: "Revenue", expectedRoi: 45 },
+    { title: "Clinical workflow analytics dashboards", category: "Data", expectedRoi: 43 },
+  ]
+}
+function backlog317(): CapabilityBacklogItem[] {
+  return [
+    { title: "Carrier scorecard program", category: "Customer", expectedRoi: 62 },
+    { title: "Detention-fee recovery process", category: "Revenue", expectedRoi: 58 },
+    { title: "Document OCR pipeline", category: "Engineering", expectedRoi: 55 },
+    { title: "Real-time load tracking API", category: "Product", expectedRoi: 53 },
+    { title: "Compliance evidence vault", category: "Knowledge", expectedRoi: 50 },
+    { title: "Driver-facing mobile app redesign", category: "Customer", expectedRoi: 47 },
+    { title: "Margin guardrails for reps", category: "Revenue", expectedRoi: 45 },
+    { title: "Intercom-to-Salesforce sync", category: "Operations", expectedRoi: 42 },
+  ]
+}
+function backlog604(): CapabilityBacklogItem[] {
+  return [
+    { title: "Status page & incident comms", category: "Customer", expectedRoi: 60 },
+    { title: "API rate-limit policy design", category: "Engineering", expectedRoi: 57 },
+    { title: "Webhook reliability & retries", category: "Engineering", expectedRoi: 54 },
+    { title: "Design-partner feedback loop", category: "Product", expectedRoi: 51 },
+    { title: "Open-source dev tooling strategy", category: "Growth", expectedRoi: 48 },
+    { title: "Cost-to-serve dashboard", category: "Data", expectedRoi: 44 },
+  ]
+}
+function backlog129(): CapabilityBacklogItem[] {
+  return [
+    { title: "Returns reverse-logistics optimization", category: "Operations", expectedRoi: 63 },
+    { title: "Subscription bundle modeling", category: "Product", expectedRoi: 58 },
+    { title: "Influencer attribution framework", category: "Growth", expectedRoi: 55 },
+    { title: "Wholesale channel P&L", category: "Revenue", expectedRoi: 52 },
+    { title: "CX macro library consolidation", category: "Knowledge", expectedRoi: 49 },
+    { title: "Creative brief templating", category: "Operations", expectedRoi: 46 },
+    { title: "SKU rationalization framework", category: "Product", expectedRoi: 44 },
+    { title: "Post-purchase lifecycle email", category: "Growth", expectedRoi: 42 },
+  ]
+}
+
 const CANDIDATE: Omit<CandidateView, "id"> = {
   handle: "observer-77",
   displayName: "A. Okafor",
@@ -586,6 +644,8 @@ export async function seedDatabase(force = false) {
         objectives: JSON.stringify(t.objectives),
         kpis: JSON.stringify(t.kpis satisfies Kpi[]),
         capabilities: JSON.stringify(t.capabilities),
+        capabilityBacklog: JSON.stringify(t.capabilityBacklog),
+        capabilitiesIdentified: t.capabilitiesIdentified,
         orgSnapshot: JSON.stringify(t.orgSnapshot),
         fidelity: t.fidelity,
         sessionsObserved: t.sessionsObserved,

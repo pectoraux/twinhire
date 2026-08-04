@@ -17,6 +17,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScoreBar, SignalChip } from "./primitives";
+import { TwinLearningPanel } from "./TwinLearningPanel";
+import { AIOrchestrationStrip } from "./AIOrchestrationStrip";
 import { cn } from "@/lib/utils";
 import type {
   BusinessTwinView,
@@ -325,6 +327,18 @@ export function EvidenceView({
           </div>
         )}
 
+        {/* Twin Learning System + AI orchestration */}
+        <div className="mt-8 grid gap-4 lg:grid-cols-2">
+          <TwinLearningPanel
+            fidelity={twin?.fidelity ?? 72}
+            sessionsObserved={(twin?.sessionsObserved ?? 0) + 1}
+            fidelityDelta={1}
+            activeStage="retrain"
+            learnedFromSession={deriveLearned(evaluation)}
+          />
+          <AIOrchestrationStrip />
+        </div>
+
         {/* CTAs */}
         <div className="mt-10 flex flex-col items-center gap-3 rounded-3xl border border-border/60 bg-gradient-to-br from-card to-secondary/40 p-8 text-center">
           <p className="font-display text-xl text-balance">
@@ -342,6 +356,39 @@ export function EvidenceView({
       </div>
     </div>
   );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Derive "what the twin learned" from the evaluation                 */
+/* ------------------------------------------------------------------ */
+
+function deriveLearned(ev: Evaluation): string[] {
+  const out: string[] = [];
+  // Pull top strength and top concern as concrete learning signals.
+  const sorted = [...ev.scores].sort((a, b) => b.score - a.score);
+  const top = sorted[0];
+  const bottom = sorted[sorted.length - 1];
+  if (top) {
+    out.push(
+      `Capability signal confirmed: ${top.label.toLowerCase()} observed at ${top.score}/100 — refines the role-fit model for this gap.`,
+    );
+  }
+  if (bottom && bottom.score < 60) {
+    out.push(
+      `Weakness to re-test: ${bottom.label.toLowerCase()} at ${bottom.score}/100 — flagged for the next simulation design.`,
+    );
+  }
+  if (ev.highlights[0]) {
+    out.push(`Operational pattern recorded: “${truncate(ev.highlights[0], 90)}”`);
+  }
+  if (ev.redFlags[0]) {
+    out.push(`Risk pattern recorded: “${truncate(ev.redFlags[0], 90)}”`);
+  }
+  return out.slice(0, 4);
+}
+
+function truncate(s: string, n: number): string {
+  return s.length > n ? s.slice(0, n - 1) + "…" : s;
 }
 
 /* ------------------------------------------------------------------ */

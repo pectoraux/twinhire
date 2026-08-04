@@ -16,6 +16,7 @@ import {
   Workflow,
 } from "lucide-react";
 import { CountUp } from "./primitives";
+import { NetworkGraph } from "./NetworkGraph";
 import { Button } from "@/components/ui/button";
 import type { ViewKey } from "./Nav";
 
@@ -59,49 +60,67 @@ export function HeroView({ onNavigate }: { onNavigate: (v: ViewKey) => void }) {
       />
 
       {/* HERO */}
-      <section className="mx-auto max-w-7xl px-4 pb-16 pt-16 sm:px-6 sm:pt-24 lg:px-8 lg:pb-24">
-        <motion.div
-          initial="hidden"
-          animate="show"
-          className="flex flex-col items-start gap-6"
-        >
-          <motion.div custom={0} variants={fade} className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/60 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur">
-            <Sparkles className="h-3.5 w-3.5 text-primary" />
-            Evidence-based recruitment operating system
+      <section className="mx-auto max-w-7xl px-4 pb-16 pt-12 sm:px-6 sm:pt-20 lg:px-8 lg:pb-24">
+        <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_1fr]">
+          {/* Left: copy */}
+          <motion.div
+            initial="hidden"
+            animate="show"
+            className="flex flex-col items-start gap-6"
+          >
+            <motion.div custom={0} variants={fade} className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/60 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur">
+              <Sparkles className="h-3.5 w-3.5 text-primary" />
+              Evidence-based recruitment operating system
+            </motion.div>
+
+            <motion.h1
+              custom={1}
+              variants={fade}
+              className="display-hero max-w-2xl text-[clamp(2.5rem,6vw,5rem)] text-balance"
+            >
+              Stop predicting potential.
+              <br />
+              <span className="ink-emerald italic">Watch them perform.</span>
+            </motion.h1>
+
+            <motion.p
+              custom={2}
+              variants={fade}
+              className="max-w-xl text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg"
+            >
+              Every company owns an AI digital twin. Candidates don&apos;t apply —
+              they <span className="font-medium text-foreground">work inside the twin</span>.
+              Businesses hire on observed evidence instead of assumptions, and every
+              outcome makes the next simulation more accurate.
+            </motion.p>
+
+            <motion.div custom={3} variants={fade} className="flex flex-wrap items-center gap-3">
+              <Button size="lg" className="h-12 gap-2 rounded-full px-6 text-base" onClick={() => onNavigate("dashboard")}>
+                Enter the talent network
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+              <Button size="lg" variant="outline" className="h-12 gap-2 rounded-full px-6 text-base" onClick={() => onNavigate("dashboard")}>
+                <Workflow className="h-4 w-4" />
+                See how it works
+              </Button>
+            </motion.div>
           </motion.div>
 
-          <motion.h1
-            custom={1}
-            variants={fade}
-            className="display-hero max-w-4xl text-[clamp(2.75rem,7vw,5.75rem)] text-balance"
+          {/* Right: living network visual */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            className="relative mx-auto w-full max-w-[560px]"
           >
-            Stop predicting potential.
-            <br />
-            <span className="ink-emerald italic">Watch them perform.</span>
-          </motion.h1>
-
-          <motion.p
-            custom={2}
-            variants={fade}
-            className="max-w-2xl text-pretty text-lg leading-relaxed text-muted-foreground sm:text-xl"
-          >
-            Every company owns an AI digital twin. Candidates don&apos;t apply —
-            they <span className="font-medium text-foreground">work inside the twin</span>.
-            Businesses hire on observed evidence instead of assumptions, and every
-            outcome makes the next simulation more accurate.
-          </motion.p>
-
-          <motion.div custom={3} variants={fade} className="flex flex-wrap items-center gap-3">
-            <Button size="lg" className="h-12 gap-2 rounded-full px-6 text-base" onClick={() => onNavigate("dashboard")}>
-              Enter the talent network
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-            <Button size="lg" variant="outline" className="h-12 gap-2 rounded-full px-6 text-base" onClick={() => onNavigate("dashboard")}>
-              <Workflow className="h-4 w-4" />
-              See how it works
-            </Button>
+            <div className="pointer-events-none absolute inset-0 -z-10 rounded-full bg-primary/[0.04] blur-2xl" />
+            <NetworkGraph />
+            <p className="mt-4 text-center text-xs text-muted-foreground">
+              A live view of the Talent Intelligence Network — work flows out,
+              evidence flows back, twins learn.
+            </p>
           </motion.div>
-        </motion.div>
+        </div>
 
         {/* Stat band */}
         <motion.dl
@@ -112,7 +131,7 @@ export function HeroView({ onNavigate }: { onNavigate: (v: ViewKey) => void }) {
         >
           {[
             { v: 4, suffix: "", label: "Anonymized business twins", decimals: 0 },
-            { v: 21, suffix: "", label: "Capability gaps ranked by ROI", decimals: 0 },
+            { v: 77, suffix: "", label: "Capabilities identified", decimals: 0 },
             { v: 58, suffix: "", label: "Observed sessions in network", decimals: 0 },
             { v: 10, suffix: "", label: "Performance dimensions measured", decimals: 0 },
           ].map((s, i) => (
