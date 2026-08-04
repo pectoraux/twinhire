@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { CountUp } from "./primitives";
 import { NetworkGraph } from "./NetworkGraph";
+import { NetworkEffectsPanel } from "./NetworkEffectsPanel";
 import { Button } from "@/components/ui/button";
 import type { ViewKey } from "./Nav";
 
@@ -150,6 +151,33 @@ export function HeroView({ onNavigate }: { onNavigate: (v: ViewKey) => void }) {
         </motion.dl>
       </section>
 
+      {/* Premium visual band */}
+      <section className="mx-auto max-w-7xl px-4 pb-8 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.97 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          className="relative overflow-hidden rounded-3xl border border-border/60"
+        >
+          <img
+            src="/twinhire-hero.png"
+            alt="Abstract visualization of the TwinHire talent intelligence network"
+            className="h-full w-full object-cover"
+            loading="lazy"
+          />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent" />
+          <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-4">
+            <p className="max-w-md text-pretty text-sm text-foreground/80 backdrop-blur-sm">
+              A network where evidence — not prediction — is the primary currency.
+            </p>
+            <span className="shrink-0 rounded-full bg-background/80 px-3 py-1 text-[10px] font-medium text-muted-foreground backdrop-blur">
+              Talent Intelligence Network
+            </span>
+          </div>
+        </motion.div>
+      </section>
+
       {/* PHILOSOPHY SHIFT */}
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <SectionHeading
@@ -270,12 +298,23 @@ export function HeroView({ onNavigate }: { onNavigate: (v: ViewKey) => void }) {
           ))}
         </div>
 
+        {/* Network effects — the flywheel */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.7 }}
-          className="mt-12 flex flex-col items-center gap-4 rounded-3xl border border-border/60 bg-gradient-to-br from-card to-secondary/40 p-10 text-center"
+          className="mt-12"
+        >
+          <NetworkEffectsPanel />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.7 }}
+          className="mt-8 flex flex-col items-center gap-4 rounded-3xl border border-border/60 bg-gradient-to-br from-card to-secondary/40 p-10 text-center"
         >
           <p className="font-display text-2xl text-balance sm:text-3xl">
             “Let&apos;s watch them perform.”

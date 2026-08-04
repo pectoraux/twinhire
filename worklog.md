@@ -103,3 +103,22 @@ Stage Summary:
 - TwinHire now has 17 components covering every layer of the vision: Business Intelligence, Digital Twin, Capability Engine, Candidate Intelligence, Digital Work Environment, Performance Intelligence, Hiring Intelligence, Twin Learning, AI Orchestration, Knowledge Graphs, Business Observatory, Outcome Learning, Longitudinal Evidence, Mutual Opt-In, Network Graph, Evidence Timeline.
 - Artifacts added: src/components/twinhire/{CandidateProfilePanel,DataSourcesPanel}.tsx; integrated into EvidenceView.tsx and TwinDashboardView.tsx.
 - Lint clean; dev server healthy; all new flows browser-verified.
+
+---
+Task ID: 6
+Agent: main (Z.ai Code orchestrator) — continuation 5
+Task: Make network effects tangible and add a premium AI-generated hero visual.
+
+Work Log:
+- Generated a premium hero image using the image-generation skill (z-ai CLI): an abstract 3D talent intelligence network visualization in emerald/amber on warm off-white, matching the design system. Saved to public/twinhire-hero.png (1344x768).
+- Added the hero image as a premium visual band in HeroView between the stat band and the philosophy shift section, with a gradient overlay and a "Talent Intelligence Network" caption.
+- Built NetworkEffectsPanel.tsx: makes the "network effects" / "flywheel" principle tangible. Shows a bidirectional flywheel — "More businesses" (Twin fidelity, Simulation realism, Hiring accuracy with base→now lift bars) ↔ "More candidates" (Skill benchmarks, Evaluation depth, Career matching) connected by a "compounds" node with bidirectional arrows. Includes a compounding exponential growth curve (solid for collected, dashed amber for projected) and scale stats (business twins, observed sessions, capability benchmarks).
+- Integrated the NetworkEffectsPanel into HeroView's closed-loop section, right before the final "Let's watch them perform" CTA.
+- Agent Browser verification: hero image loads (1344px, complete); Network Effects panel renders with both flywheel sides, compounding curve, and scale stats; no runtime errors.
+
+Stage Summary:
+- The hero now has a premium AI-generated visual band, elevating the Apple-quality aesthetic.
+- Network effects — the final major vision principle — is now a tangible flywheel visualization showing how businesses and candidates compound each other's intelligence.
+- TwinHire now has 18 components covering every layer and principle of the vision, including the network-effect flywheel that ties the whole "intelligence network" concept together.
+- Artifacts added: public/twinhire-hero.png (generated), src/components/twinhire/NetworkEffectsPanel.tsx; integrated into HeroView.tsx.
+- Lint clean; dev server healthy; all new content browser-verified.
