@@ -313,3 +313,35 @@ Stage Summary:
 - TwinHire now has 28 components. The settings panel is accessible from the user dropdown.
 - Artifacts: prisma/schema.prisma (UserApiKey), src/app/api/user/api-keys/{route,[id]/route}.ts, src/components/twinhire/{ApiKeySettings,ConfidenceIndicator}.tsx, updated Nav/page.tsx/EvidenceView/types.ts/evaluate route.
 - Lint clean; all features browser-verified; pushed to GitHub.
+
+---
+Task ID: 14
+Agent: main (Z.ai Code orchestrator) — continuation 13
+Task: Simulation debrief (model answer + comparison) + role-based hero perspectives.
+
+Work Log:
+- Created /api/twinhire/debrief endpoint: LLM generates a model answer, what-this-tested, comparison (candidateDidWell / candidateMissed / keyDifference), and learningEdge. Turns every completed simulation into a learning opportunity.
+- Built SimulationDebrief.tsx: post-evaluation panel with:
+  - "What this tested" — the hidden intent behind the surface task
+  - "Model answer" — how a strong operator would have approached it (200-400 words)
+  - "What you did well" — 2-3 specific things from the candidate's submission (green)
+  - "A stronger answer would have" — 2-3 constructive gaps (amber, framed as "would have")
+  - "The key difference" — the single most important difference
+  - "Your learning edge" — what to practice or study next
+  - Lazy-loaded: shows a "Generate debrief" button initially, then loads on click
+- Built RoleSwitcher.tsx: toggle between Business and Candidate perspectives in the hero:
+  - Business: "Hire on evidence, not prediction" with 4 business bullets (connect data sources, see capability gaps, watch candidates perform, hire on evidence) + "Explore the twin network" CTA
+  - Candidate: "Show what you can do, not what you've done" with 4 candidate bullets (build capability graph, work inside twins, every action becomes evidence, get hired on ability) + "See how it works" CTA
+  - Animated transitions between roles, different accent colors, "Both sides participate in the same Talent Intelligence Network" badge
+- Integrated SimulationDebrief into EvidenceView (after the confidence indicator, before the scores). Integrated RoleSwitcher into HeroView (between the philosophy shift and the seven layers).
+- Agent Browser verification:
+  - RoleSwitcher: both Business and Candidate perspectives render with correct headlines and 4 bullets each, switching updates content with animation.
+  - SimulationDebrief: full sim→evaluate→recommend flow completed; "Generate debrief" button present; clicked → LLM generated model answer, comparison ("A stronger answer would have addressed data quality reconciliation more explicitly before modeling"), key difference ("The model answer prioritizes stakeholder management and operational integration... while the candidate focused more on technical progression"), and learning edge. No runtime errors.
+
+Stage Summary:
+- Two features added:
+  1. Simulation Debrief — every completed simulation can now be turned into a learning opportunity with a model answer, specific comparison, and actionable learning edge. Deepens the closed loop from "evaluate" to "learn".
+  2. Role-based hero perspectives — visitors can toggle between Business and Candidate value propositions, making the two-sided network tangible from the first screen.
+- TwinHire now has 30 components.
+- Artifacts: src/app/api/twinhire/debrief/route.ts, src/components/twinhire/{SimulationDebrief,RoleSwitcher}.tsx, updated EvidenceView/HeroView.
+- Lint clean; all features browser-verified; pushed to GitHub.
