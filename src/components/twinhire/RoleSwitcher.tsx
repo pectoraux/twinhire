@@ -47,7 +47,7 @@ const ROLE_CONTENT: Record<Role, {
     bullets: [
       { title: "Build a capability graph", desc: "Not a résumé — a continuously evolving graph of what you can demonstrably do" },
       { title: "Work inside real business twins", desc: "Anonymized companies with real problems. Perform operational work that matters" },
-      { title: "Every action becomes evidence", desc: "Quality, initiative, problem-solving — 10 dimensions measured with quotable proof" },
+      { title: "Every action becomes evidence", desc: "Quality, initiative, problem-solving — 17 dimensions measured with quotable proof" },
       { title: "Get hired on demonstrated ability", desc: "No more keyword matching. Businesses see your actual work before interviewing" },
     ],
     cta: "See how it works",

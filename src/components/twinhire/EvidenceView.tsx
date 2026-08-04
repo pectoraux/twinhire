@@ -236,7 +236,7 @@ export function EvidenceView({
             <h3 className="flex items-center gap-2 text-sm font-semibold">
               <Layers className="h-4 w-4 text-primary" /> Performance profile
             </h3>
-            <p className="mt-1 text-xs text-muted-foreground">10 dimensions of demonstrated capability</p>
+            <p className="mt-1 text-xs text-muted-foreground">17 dimensions of demonstrated capability</p>
             <div className="mt-4 grid place-items-center">
               <RadarChart scores={evaluation.scores} />
             </div>
@@ -497,7 +497,7 @@ function RadarChart({ scores }: { scores: { key: string; label: string; score: n
     .join(" ");
 
   return (
-    <svg width={size} height={size} role="img" aria-label="Performance radar across 10 dimensions">
+    <svg width={size} height={size} role="img" aria-label="Performance radar across 17 dimensions">
       {/* rings */}
       {rings.map((r) => (
         <polygon

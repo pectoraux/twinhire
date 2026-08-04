@@ -25,6 +25,12 @@ export interface CapabilityGap {
   businessImpact: string
   estRevenueImpact: string
   estTimeSavings: string
+  /// Estimated impact on customer satisfaction (qualitative)
+  customerImpact?: string
+  /// Strategic importance (1-5)
+  strategicImportance?: 1 | 2 | 3 | 4 | 5
+  /// Risk of not addressing this gap (1-5)
+  risk?: 1 | 2 | 3 | 4 | 5
   difficulty: 1 | 2 | 3 | 4 | 5
   urgency: 1 | 2 | 3 | 4 | 5
   confidence: number // 0-100
@@ -82,6 +88,26 @@ export interface CandidateView {
     preferredStack: string[]
     aiLeverage: string
     workStyle: string
+    /// Reasoning style (e.g. "First-principles", "Analogy-driven")
+    reasoningStyle?: string
+    /// Learning speed (e.g. "Fast — adapts within 1 session")
+    learningSpeed?: string
+    /// Career goals
+    goals?: string
+    /// AI tools the candidate uses
+    aiTools?: string[]
+    /// Coding ability (1-5)
+    codingAbility?: 1 | 2 | 3 | 4 | 5
+    /// Writing ability (1-5)
+    writingAbility?: 1 | 2 | 3 | 4 | 5
+    /// Research ability (1-5)
+    researchAbility?: 1 | 2 | 3 | 4 | 5
+    /// Certifications
+    certifications?: string[]
+    /// Education
+    education?: string
+    /// Domain expertise
+    domainExpertise?: string[]
   }
   reputation: number
   sessionsCompleted: number
@@ -137,26 +163,40 @@ export interface Recommendation {
 
 export const METRIC_KEYS = [
   "quality",
+  "accuracy",
   "initiative",
   "ownership",
+  "consistency",
+  "curiosity",
+  "learning",
   "problem_solving",
   "creativity",
   "decision_quality",
   "communication",
   "speed",
+  "attention_to_detail",
+  "collaboration",
   "ai_leverage",
-  "adaptability",
+  "improvement_over_time",
+  "autonomy",
 ] as const
 
 export const METRIC_LABELS: Record<string, string> = {
-  quality: "Quality & Accuracy",
+  quality: "Quality",
+  accuracy: "Accuracy",
   initiative: "Initiative",
   ownership: "Ownership",
+  consistency: "Consistency",
+  curiosity: "Curiosity",
+  learning: "Learning",
   problem_solving: "Problem Solving",
   creativity: "Creativity",
   decision_quality: "Decision Quality",
   communication: "Communication",
   speed: "Speed & Throughput",
+  attention_to_detail: "Attention to Detail",
+  collaboration: "Collaboration",
   ai_leverage: "AI Leverage",
-  adaptability: "Adaptability",
+  improvement_over_time: "Improvement Over Time",
+  autonomy: "Autonomy",
 }

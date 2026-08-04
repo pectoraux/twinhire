@@ -11,22 +11,29 @@ import type { HistorySession } from "./EvidenceTimeline";
  * participate" tangible.
  *
  * Shows how the candidate compares against the network average across the
- * 10 performance dimensions, plus a percentile ranking. As more candidates
+ * 17 performance dimensions, plus a percentile ranking. As more candidates
  * participate, these benchmarks compound and sharpen.
  */
 
 // Network average scores (simulated — would come from aggregate data in production)
 const NETWORK_AVERAGES: Record<string, number> = {
   quality: 62,
+  accuracy: 60,
   initiative: 58,
   ownership: 64,
+  consistency: 61,
+  curiosity: 55,
+  learning: 57,
   problem_solving: 61,
   creativity: 55,
   decision_quality: 59,
   communication: 66,
   speed: 60,
+  attention_to_detail: 63,
+  collaboration: 65,
   ai_leverage: 52,
-  adaptability: 57,
+  improvement_over_time: 54,
+  autonomy: 58,
 };
 
 const NETWORK_SIZE = 847; // candidates in the network
@@ -168,14 +175,21 @@ function aggregateScores(sessions: HistorySession[]): { key: string; label: stri
 }
 
 const LABELS: Record<string, string> = {
-  quality: "Quality & Accuracy",
+  quality: "Quality",
+  accuracy: "Accuracy",
   initiative: "Initiative",
   ownership: "Ownership",
+  consistency: "Consistency",
+  curiosity: "Curiosity",
+  learning: "Learning",
   problem_solving: "Problem Solving",
   creativity: "Creativity",
   decision_quality: "Decision Quality",
   communication: "Communication",
   speed: "Speed & Throughput",
+  attention_to_detail: "Attention to Detail",
+  collaboration: "Collaboration",
   ai_leverage: "AI Leverage",
-  adaptability: "Adaptability",
+  improvement_over_time: "Improvement Over Time",
+  autonomy: "Autonomy",
 };

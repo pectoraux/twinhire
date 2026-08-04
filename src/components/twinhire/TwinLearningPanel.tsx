@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils";
 
 const LOOP_STAGES = [
   { key: "observe", label: "Observe work", icon: Eye, desc: "Candidate performs inside the twin" },
-  { key: "evaluate", label: "Generate evidence", icon: BrainCircuit, desc: "10 dimensions scored" },
+  { key: "evaluate", label: "Generate evidence", icon: BrainCircuit, desc: "17 dimensions scored" },
   { key: "decide", label: "Hiring decision", icon: ArrowUpRight, desc: "Explainable recommendation" },
   { key: "retrain", label: "Retrain twin", icon: RefreshCw, desc: "Outcome updates fidelity & models" },
 ];

@@ -338,7 +338,7 @@ export function SimulationView({
               <div className="text-center">
                 <div className="font-display text-lg">Performance Intelligence Engine</div>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Reading your work across 10 dimensions of evidence…
+                  Reading your work across 17 dimensions of evidence…
                 </p>
               </div>
             </div>

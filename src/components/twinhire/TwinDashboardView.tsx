@@ -361,8 +361,11 @@ function CapabilityRow({
           <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs">
             <Impact label="Revenue impact" value={gap.estRevenueImpact} />
             <Impact label="Time savings" value={gap.estTimeSavings} />
+            {gap.customerImpact && <Impact label="Customer impact" value={gap.customerImpact} />}
             <Dots label="Difficulty" value={gap.difficulty} />
             <Dots label="Urgency" value={gap.urgency} tone="accent" />
+            {gap.strategicImportance && <Dots label="Strategic" value={gap.strategicImportance} />}
+            {gap.risk && <Dots label="Risk" value={gap.risk} tone="accent" />}
             <span className="text-muted-foreground">
               Confidence <span className="font-mono font-medium text-foreground">{gap.confidence}%</span>
             </span>

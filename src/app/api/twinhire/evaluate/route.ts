@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic"
 
 // POST /api/twinhire/evaluate
 // Body: { sessionId, submission }
-// The candidate's work is evaluated by the intelligence engine across 10 dimensions,
+// The candidate's work is evaluated by the intelligence engine across 17 dimensions,
 // producing observable evidence (not a vibes-based score). Persists the evaluation.
 export async function POST(req: Request) {
   try {
@@ -92,14 +92,14 @@ Return JSON with EXACTLY this shape:
 }
 
 Requirements:
-- Include a score entry for ALL 10 metric keys listed above.
-- Provide 5-8 evidence items total, each tied to something concrete in the submission.
+- Include a score entry for ALL 17 metric keys listed above.
+- Provide 6-10 evidence items total, each tied to something concrete in the submission.
 - Quotes must be <= 22 words and verbatim from the submission, or omitted (empty string).
 - Be specific and operational, never generic.`
 
     const evaluation = await completeJson<Evaluation>(system, user)
 
-    // Normalize/validate scores so the UI always has all 10 metrics
+    // Normalize/validate scores so the UI always has all 17 metrics
     evaluation.scores = ensureAllMetrics(evaluation.scores)
 
     // Compute system confidence in this LLM-generated evaluation.

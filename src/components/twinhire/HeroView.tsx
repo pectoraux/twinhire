@@ -40,7 +40,7 @@ const LAYERS = [
   { n: "03", icon: Target, title: "Capability Engine", desc: "Continuously surfaces capability gaps ranked by ROI — not job titles, but missing functions." },
   { n: "04", icon: Network, title: "Candidate Intelligence", desc: "A capability graph, not a résumé. Bring your own models or use the pooled AI." },
   { n: "05", icon: Workflow, title: "Digital Work Environment", desc: "Candidates enter anonymized twins and perform real, meaningful operational work." },
-  { n: "06", icon: Eye, title: "Performance Intelligence", desc: "Every action becomes observable evidence across 10 dimensions. No black box." },
+  { n: "06", icon: Eye, title: "Performance Intelligence", desc: "Every action becomes observable evidence across 17 dimensions. No black box." },
   { n: "07", icon: GitBranch, title: "Hiring Intelligence", desc: "Explainable recommendations. Outcomes flow back to retrain every twin." },
 ];
 
@@ -139,7 +139,7 @@ export function HeroView({ onNavigate }: { onNavigate: (v: ViewKey) => void }) {
             { v: 4, suffix: "", label: "Anonymized business twins", decimals: 0 },
             { v: 77, suffix: "", label: "Capabilities identified", decimals: 0 },
             { v: 58, suffix: "", label: "Observed sessions in network", decimals: 0 },
-            { v: 10, suffix: "", label: "Performance dimensions measured", decimals: 0 },
+            { v: 17, suffix: "", label: "Performance dimensions measured", decimals: 0 },
           ].map((s, i) => (
             <motion.div
               key={s.label}

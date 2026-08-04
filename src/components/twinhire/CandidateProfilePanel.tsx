@@ -192,7 +192,26 @@ export function CandidateProfilePanel({
         <MetaRow label="Languages" value={candidate.profile.languages.join(", ")} />
         <MetaRow label="AI leverage" value={candidate.profile.aiLeverage} />
         <MetaRow label="Work style" value={candidate.profile.workStyle} />
+        {candidate.profile.reasoningStyle && <MetaRow label="Reasoning style" value={candidate.profile.reasoningStyle} />}
+        {candidate.profile.learningSpeed && <MetaRow label="Learning speed" value={candidate.profile.learningSpeed} />}
+        {candidate.profile.goals && <MetaRow label="Goals" value={candidate.profile.goals} />}
+        {candidate.profile.education && <MetaRow label="Education" value={candidate.profile.education} />}
+        {candidate.profile.certifications && candidate.profile.certifications.length > 0 && (
+          <MetaRow label="Certifications" value={candidate.profile.certifications.join(", ")} />
+        )}
+        {candidate.profile.domainExpertise && candidate.profile.domainExpertise.length > 0 && (
+          <MetaRow label="Domain expertise" value={candidate.profile.domainExpertise.join(", ")} />
+        )}
       </div>
+
+      {/* Ability bars */}
+      {(candidate.profile.codingAbility || candidate.profile.writingAbility || candidate.profile.researchAbility) && (
+        <div className="mt-3 grid gap-2 sm:grid-cols-3">
+          {candidate.profile.codingAbility && <AbilityBar label="Coding" value={candidate.profile.codingAbility} />}
+          {candidate.profile.writingAbility && <AbilityBar label="Writing" value={candidate.profile.writingAbility} />}
+          {candidate.profile.researchAbility && <AbilityBar label="Research" value={candidate.profile.researchAbility} />}
+        </div>
+      )}
     </div>
   );
 }
@@ -224,4 +243,26 @@ function confidenceLabel(c: number): string {
   if (c >= 80) return "high — well-evidenced";
   if (c >= 65) return "moderate — growing";
   return "early — needs more sessions";
+}
+
+function AbilityBar({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="rounded-lg bg-secondary/30 p-2.5">
+      <div className="flex items-center justify-between">
+        <span className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</span>
+        <span className="text-[10px] font-mono text-muted-foreground">L{value}/5</span>
+      </div>
+      <div className="mt-1.5 flex gap-0.5">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <span
+            key={i}
+            className={cn(
+              "h-1.5 flex-1 rounded-full",
+              i < value ? "bg-primary" : "bg-muted-foreground/20",
+            )}
+          />
+        ))}
+      </div>
+    </div>
+  );
 }

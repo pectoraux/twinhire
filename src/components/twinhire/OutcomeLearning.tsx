@@ -139,6 +139,21 @@ export function OutcomeLearning({
             ))}
           </div>
         )}
+
+        {/* Outcome signals — promotion, retention, feedback */}
+        <div className="mt-4">
+          <div className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+            Outcome signals collected
+          </div>
+          <div className="mt-2 grid gap-2 sm:grid-cols-3 lg:grid-cols-6">
+            <OutcomeSignal label="Retention" value="On track" status="positive" />
+            <OutcomeSignal label="Promotion" value="Eligible" status="positive" />
+            <OutcomeSignal label="Manager" value="4.2/5" status="positive" />
+            <OutcomeSignal label="Team" value="4.0/5" status="positive" />
+            <OutcomeSignal label="Candidate" value="4.5/5" status="positive" />
+            <OutcomeSignal label="Business impact" value="+12% KPI" status="positive" />
+          </div>
+        </div>
       </div>
 
       {/* What gets retrained */}
@@ -181,6 +196,29 @@ export function OutcomeLearning({
           <div className="font-display text-2xl text-foreground">{Math.min(96, twinFidelity + 8)}<span className="text-sm text-muted-foreground">/100</span></div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function OutcomeSignal({
+  label,
+  value,
+  status,
+}: {
+  label: string;
+  value: string;
+  status: "positive" | "neutral" | "negative";
+}) {
+  const cls =
+    status === "positive"
+      ? "text-emerald-700 bg-emerald-50 dark:text-emerald-300 dark:bg-emerald-500/10"
+      : status === "negative"
+        ? "text-rose-700 bg-rose-50 dark:text-rose-300 dark:bg-rose-500/10"
+        : "text-muted-foreground bg-secondary";
+  return (
+    <div className={cn("rounded-lg px-2.5 py-1.5 text-center", cls)}>
+      <div className="text-[9px] uppercase tracking-wider opacity-70">{label}</div>
+      <div className="text-xs font-semibold">{value}</div>
     </div>
   );
 }

@@ -21,13 +21,19 @@ const PROVIDERS = [
   { name: "Mistral", status: "available" },
   { name: "Groq", status: "available" },
   { name: "Ollama", status: "self-hosted" },
+  { name: "Azure OpenAI", status: "available" },
+  { name: "AWS Bedrock", status: "available" },
+  { name: "Vertex AI", status: "available" },
 ];
 
 const ROUTING = [
   { task: "Work task generation", model: "reasoning", via: "ensemble" },
-  { task: "Performance evaluation", model: "reasoning", via: "ensemble" },
+  { task: "Performance evaluation (17 dims)", model: "reasoning", via: "ensemble" },
   { task: "Hiring recommendation", model: "reasoning", via: "primary" },
+  { task: "Simulation debrief", model: "reasoning", via: "fallback" },
+  { task: "Use case anonymization", model: "reasoning", via: "primary" },
   { task: "Capability surfacing", model: "fast", via: "fallback" },
+  { task: "Anomaly detection", model: "fast", via: "fallback" },
 ];
 
 export function AIOrchestrationStrip({ className }: { className?: string }) {
@@ -121,8 +127,9 @@ export function AIOrchestrationStrip({ className }: { className?: string }) {
 
       <div className="mt-4 flex items-center gap-2 text-[11px] text-muted-foreground">
         <Shield className="h-3.5 w-3.5" />
-        Cost & latency limits enforced per tenant. Fallback models activate on
-        failure. Future providers slot in without architectural change.
+        Routing policies, model ensembles, fallback models, cost &amp; latency limits,
+        and reasoning-vs-fast routing — all configurable per tenant. Future providers
+        slot in without architectural change.
       </div>
     </div>
   );
