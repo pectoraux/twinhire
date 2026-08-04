@@ -84,3 +84,22 @@ Stage Summary:
 - Combined with prior continuations, TwinHire now tangibly demonstrates every major principle from the vision: evidence over prediction, longitudinal evidence, explainable recommendations, strict anonymization (mutual opt-in), provider-agnostic AI, learning twins, knowledge graphs, no black box, and outcome-based retraining.
 - Artifacts added: src/components/twinhire/{BusinessObservatory,OutcomeLearning}.tsx; integrated into page.tsx and EvidenceView.tsx.
 - Lint clean; dev server healthy; all new flows browser-verified.
+
+---
+Task ID: 5
+Agent: main (Z.ai Code orchestrator) — continuation 4
+Task: Make the Candidate Intelligence and Business Intelligence layers first-class interactive surfaces.
+
+Work Log:
+- Built CandidateProfilePanel.tsx: an interactive capability graph replacing the static list in EvidenceView. Each domain (Lifecycle Growth, Operations, Data, Product, Technical Writing, AI Leverage) is an expandable card showing proficiency level (L1-L5 with labels like "Expert"), confidence percentage with qualitative label ("high — well-evidenced"), evidence basis (session count), and a scoring explanation. Includes identity row with preferred stack badges, reputation/sessions/avg-confidence stats, and profile meta (availability, languages, AI leverage, work style).
+- Built DataSourcesPanel.tsx: visualizes the Business Intelligence ingestion layer in the dashboard. Derives connected data sources from each twin's actual tech stack (Snowflake, NetSuite, Klaviyo for D2C; Linear, Stripe, Postgres for Embedded Payments; etc.), each with category color, sync status (synced/syncing/connected), record counts, and last-sync time. Includes a "What the AI understands" section (business model, customer segments, operational processes, decision patterns, knowledge gaps, communication style).
+- Integrated: CandidateProfilePanel replaces the static capability graph in EvidenceView; DataSourcesPanel added to TwinDashboardView between the twin detail and capability ranking.
+- Agent Browser verification: DataSourcesPanel renders context-aware sources per twin (TWIN-129 shows Snowflake/NetSuite/Klaviyo; TWIN-604 shows Linear/Stripe/Postgres with "syncing now…"); full sim→evaluate→recommend flow completes; evidence view shows the interactive CandidateProfilePanel — clicking "AI Leverage & Automation" expands to show "Level 5 / 5 (Expert)", "88% — high — well-evidenced", "4 sessions / observed work", and the scoring explanation. No runtime errors.
+
+Stage Summary:
+- Two more vision layers are now first-class interactive surfaces:
+  1. Candidate Intelligence — the capability graph is now explorable (expandable domains with evidence-backed confidence), not a static list.
+  2. Business Intelligence — the data source ingestion layer is visible per-twin, showing what feeds the twin and what the AI understands from it.
+- TwinHire now has 17 components covering every layer of the vision: Business Intelligence, Digital Twin, Capability Engine, Candidate Intelligence, Digital Work Environment, Performance Intelligence, Hiring Intelligence, Twin Learning, AI Orchestration, Knowledge Graphs, Business Observatory, Outcome Learning, Longitudinal Evidence, Mutual Opt-In, Network Graph, Evidence Timeline.
+- Artifacts added: src/components/twinhire/{CandidateProfilePanel,DataSourcesPanel}.tsx; integrated into EvidenceView.tsx and TwinDashboardView.tsx.
+- Lint clean; dev server healthy; all new flows browser-verified.

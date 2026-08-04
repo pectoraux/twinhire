@@ -23,6 +23,7 @@ import { EvidenceTimeline, type HistorySession } from "./EvidenceTimeline";
 import { MutualOptInDialog } from "./MutualOptInDialog";
 import { BusinessObservatory } from "./BusinessObservatory";
 import { OutcomeLearning } from "./OutcomeLearning";
+import { CandidateProfilePanel } from "./CandidateProfilePanel";
 import { cn } from "@/lib/utils";
 import type {
   BusinessTwinView,
@@ -319,41 +320,13 @@ export function EvidenceView({
           </div>
         </div>
 
-        {/* Candidate capability graph + reputation */}
+        {/* Candidate capability graph — interactive */}
         {candidate && (
-          <div className="mt-10 rounded-2xl border border-border/60 bg-card p-6">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <div className="text-xs text-muted-foreground">Candidate capability graph</div>
-                <h3 className="font-display text-xl">{candidate.displayName} <span className="text-muted-foreground">· {candidate.handle}</span></h3>
-                <p className="text-sm text-muted-foreground">{candidate.headline}</p>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="text-center">
-                  <div className="text-xs text-muted-foreground">Reputation</div>
-                  <div className="font-display text-2xl text-primary">{candidate.reputation}</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-xs text-muted-foreground">Sessions</div>
-                  <div className="font-display text-2xl">{candidate.sessionsCompleted}</div>
-                </div>
-              </div>
-            </div>
-            <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {candidate.capabilityGraph.map((c, i) => (
-                <div key={c.domain} className="rounded-xl bg-secondary/40 p-3">
-                  <div className="flex items-baseline justify-between gap-2">
-                    <span className="text-xs font-medium">{c.domain}</span>
-                    <span className="font-mono text-xs text-muted-foreground">L{c.level}</span>
-                  </div>
-                  <ScoreBar value={c.confidence} className="mt-2" tone={c.confidence >= 75 ? "primary" : "accent"} delay={i * 0.05} />
-                  <div className="mt-1 text-[10px] text-muted-foreground">{c.confidence}% confidence</div>
-                </div>
-              ))}
-            </div>
-            <p className="mt-4 text-xs text-muted-foreground">
-              This graph updates with every session. Outcomes flow back to retrain the twin and sharpen future recommendations.
-            </p>
+          <div className="mt-10">
+            <CandidateProfilePanel
+              candidate={candidate}
+              sessionCount={Math.max(candidate.sessionsCompleted, history.length)}
+            />
           </div>
         )}
 

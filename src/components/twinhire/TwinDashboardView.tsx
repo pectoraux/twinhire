@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { CategoryBadge, FidelityRing, ScoreBar, TrendPill, LiveDot } from "./primitives";
 import { TwinKnowledgeGraph } from "./TwinKnowledgeGraph";
+import { DataSourcesPanel } from "./DataSourcesPanel";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -210,6 +211,11 @@ export function TwinDashboardView({
             </div>
           </motion.div>
         </AnimatePresence>
+
+        {/* Business intelligence layer — connected data sources */}
+        <div className="mt-8">
+          <DataSourcesPanel twin={twin} />
+        </div>
 
         {/* Capability gap ranking */}
         <div className="mt-12">
