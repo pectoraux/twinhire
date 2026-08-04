@@ -93,7 +93,13 @@ const PUBLIC_API_URL = "https://api.z.ai/api/paas/v4/chat/completions"
 const PUBLIC_MODEL = "glm-4-plus"
 
 async function completeViaPublicApi(systemPrompt: string, userPrompt: string): Promise<string> {
-  const apiKey = process.env.ZAI_PUBLIC_API_KEY!
+  const apiKey = process.env.ZAI_PUBLIC_API_KEY || process.env.ZAI_API_KEY
+  if (!apiKey || apiKey === "Z.ai") {
+    throw new Error(
+      "ZAI_PUBLIC_API_KEY not set. Get a Z.ai API key from https://z.ai/manage-apikey/apikey-list " +
+      "and add it as ZAI_PUBLIC_API_KEY in Vercel env vars."
+    )
+  }
   const res = await fetch(PUBLIC_API_URL, {
     method: "POST",
     headers: {
