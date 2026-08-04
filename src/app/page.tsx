@@ -38,6 +38,7 @@ export default function Home() {
   const [sessionAvg, setSessionAvg] = useState<number | null>(null);
   const [evidenceTwin, setEvidenceTwin] = useState<BusinessTwinView | null>(null);
   const [history, setHistory] = useState<HistorySession[]>([]);
+  const [submission, setSubmission] = useState<string>("");
 
   const { toast } = useToast();
 
@@ -131,14 +132,15 @@ export default function Home() {
   );
 
   const handleSubmit = useCallback(
-    async (submission: string) => {
+    async (submissionText: string) => {
       if (!sessionId) return;
+      setSubmission(submissionText);
       setEvaluating(true);
       try {
         const res = await fetch("/api/twinhire/evaluate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sessionId, submission }),
+          body: JSON.stringify({ sessionId, submission: submissionText }),
         });
         if (!res.ok) throw new Error("Evaluation failed");
         const data = (await res.json()) as { evaluation: Evaluation };
@@ -242,6 +244,7 @@ export default function Home() {
                 recommendation={recommendation}
                 sessionAvg={sessionAvg}
                 taskTitle={task?.taskTitle ?? ""}
+                submission={submission}
                 history={history}
                 onNavigate={navigate}
                 onAnotherChallenge={handleAnotherChallenge}

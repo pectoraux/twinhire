@@ -21,6 +21,8 @@ import { TwinLearningPanel } from "./TwinLearningPanel";
 import { AIOrchestrationStrip } from "./AIOrchestrationStrip";
 import { EvidenceTimeline, type HistorySession } from "./EvidenceTimeline";
 import { MutualOptInDialog } from "./MutualOptInDialog";
+import { BusinessObservatory } from "./BusinessObservatory";
+import { OutcomeLearning } from "./OutcomeLearning";
 import { cn } from "@/lib/utils";
 import type {
   BusinessTwinView,
@@ -74,6 +76,7 @@ export function EvidenceView({
   recommendation,
   sessionAvg,
   taskTitle,
+  submission,
   history,
   onNavigate,
   onAnotherChallenge,
@@ -84,6 +87,7 @@ export function EvidenceView({
   recommendation: Recommendation | null;
   sessionAvg: number | null;
   taskTitle: string;
+  submission: string;
   history: HistorySession[];
   onNavigate: (v: ViewKey) => void;
   onAnotherChallenge: () => void;
@@ -226,6 +230,16 @@ export function EvidenceView({
           </div>
         </div>
 
+        {/* Business observatory — no black box */}
+        <div className="mt-6">
+          <BusinessObservatory
+            evaluation={evaluation}
+            twin={twin}
+            submission={submission}
+            taskTitle={taskTitle}
+          />
+        </div>
+
         {/* Highlights / Red flags */}
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           <div className="rounded-2xl border border-emerald-200/60 bg-emerald-50/40 p-6 dark:border-emerald-500/20 dark:bg-emerald-500/[0.06]">
@@ -358,6 +372,14 @@ export function EvidenceView({
         {/* Longitudinal evidence timeline */}
         <div className="mt-8">
           <EvidenceTimeline sessions={history} reputation={candidate?.reputation ?? 50} />
+        </div>
+
+        {/* Outcome learning — outcomes retrain the twin */}
+        <div className="mt-8">
+          <OutcomeLearning
+            sessionsObserved={history.length}
+            twinFidelity={twin?.fidelity ?? 72}
+          />
         </div>
 
         {/* CTAs */}

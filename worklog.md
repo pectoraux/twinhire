@@ -64,3 +64,23 @@ Stage Summary:
 - The TwinKnowledgeGraph makes the "graphs" architecture (capability/KPI/department/problem connections) tangible in the dashboard.
 - Artifacts added: src/app/api/twinhire/history/route.ts, src/components/twinhire/{EvidenceTimeline,MutualOptInDialog,TwinKnowledgeGraph}.tsx; integrated into page.tsx, EvidenceView.tsx, TwinDashboardView.tsx.
 - Lint clean; dev server healthy; all new flows browser-verified.
+
+---
+Task ID: 4
+Agent: main (Z.ai Code orchestrator) — continuation 3
+Task: Make the "no black box / businesses inspect everything" and "outcomes retrain the twins" principles tangible.
+
+Work Log:
+- Built BusinessObservatory.tsx: a "no black box" panel showing, from the hiring business's perspective, exactly what they can inspect from the candidate's work. Derives inspectable artifacts from the submission (reasoning chain, decision artifact, quantified impact with figure count, AI leverage trace), connects to KPIs the work would affect (with projected direction), computes a transparency score, and lists inspection guarantees (full submission retained/auditable, every prompt traceable, reasoning chain reconstructable, evidence exportable).
+- Built OutcomeLearning.tsx: a 30/60/90-day/6mo/1yr outcome checkpoint timeline showing collected vs pending vs projected outcomes, what each checkpoint retraines (Digital twin fidelity, Capability ranking, Hiring recommendations, Evaluation model), and a fidelity projection (current vs full-cycle projected). Makes "after hiring, collect outcomes that retrain the twins" tangible.
+- Wired submission state through page.tsx → EvidenceView so the BusinessObservatory can analyze the actual candidate work.
+- Integrated both panels into EvidenceView: BusinessObservatory after the impact/AI-leverage section, OutcomeLearning after the longitudinal timeline.
+- Agent Browser verification: full sim→evaluate→recommend flow completes; evidence view renders both new panels with rich derived content — BusinessObservatory shows "Reasoning chain", "Decision artifact", "Quantified impact (7 figures)", "AI leverage trace", "Inspection guarantees: Full submission retained & auditable / Every prompt & AI call traceable"; OutcomeLearning shows 30/60/90/6mo/1yr checkpoints, "Live retraining +N signals", retrain targets (Digital twin fidelity +2.1pt, Capability ranking reshuffled, Hiring recommendations calibrated, Evaluation model weighted), and "Twin fidelity now" projection. No runtime errors.
+
+Stage Summary:
+- Two more core vision principles are now interactive product surfaces:
+  1. "No black box — businesses inspect every decision, prompt, artifact, KPI" → BusinessObservatory with transparency score + inspectable artifacts + inspection guarantees.
+  2. "After hiring, collect outcomes (30/60/90-day) that retrain the twins" → OutcomeLearning with checkpoint timeline + retrain targets + fidelity projection.
+- Combined with prior continuations, TwinHire now tangibly demonstrates every major principle from the vision: evidence over prediction, longitudinal evidence, explainable recommendations, strict anonymization (mutual opt-in), provider-agnostic AI, learning twins, knowledge graphs, no black box, and outcome-based retraining.
+- Artifacts added: src/components/twinhire/{BusinessObservatory,OutcomeLearning}.tsx; integrated into page.tsx and EvidenceView.tsx.
+- Lint clean; dev server healthy; all new flows browser-verified.
