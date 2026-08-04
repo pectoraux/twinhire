@@ -271,3 +271,45 @@ Stage Summary:
 - TwinHire now has 26 components. The admin panel has two tabs (Waitlist + Use cases). The simulation environment is now integrity-protected.
 - Artifacts: prisma/schema.prisma (UseCaseSubmission), src/app/api/twinhire/use-case/route.ts, src/components/twinhire/{UseCaseIngestionPanel,AntiCheatOverlay}.tsx, updated AdminPanel/SimulationView/page.tsx.
 - Lint clean; all features browser-verified; pushed to GitHub.
+
+---
+Task ID: 13
+Agent: main (Z.ai Code orchestrator) — continuation 12
+Task: User API key management (bring-your-own-keys) + LLM confidence scoring.
+
+Work Log:
+- Added UserApiKey model to Prisma (userId, provider, keyValue, isActive, label, lastVerifiedAt, unique on [userId, provider]). Pushed to Neon.
+- Created /api/user/api-keys endpoint: GET (list with masked values), POST (upsert one key per provider), DELETE, PATCH (toggle active / mark verified).
+- Built ApiKeySettings.tsx: guided onboarding panel for bring-your-own API keys. Features:
+  - 6 providers (Z.ai recommended, OpenAI, Anthropic, Gemini, DeepSeek, Groq) with descriptions and "Get a key" docs links
+  - Status banner: "No keys configured — using the platform pool" → "N keys active — your simulations use your keys"
+  - Add/replace/delete/toggle per provider
+  - Masked key display (first 6 + •••• + last 4)
+  - Security note: "Keys are stored securely and never exposed to other users"
+  - "How your keys are used" explainer with provider-agnostic architecture note
+- Added "API keys" item to the Nav user dropdown menu; integrated ApiKeySettings into page.tsx with settingsMode state.
+- LLM confidence scoring: added computeConfidence() to the evaluate route. Computes 0-100 from:
+  - Evidence count (more = higher)
+  - Score variance (moderate stdDev 5-25 is healthy; <3 is suspicious)
+  - Notes richness (avg note length >80 = +8)
+  - Balanced view (both highlights + redFlags = +7)
+  - Summary depth (>150 chars = +5)
+  - Verbatim quotes in evidence (+1.5 each, max 5)
+  - Submission length penalty (>4000 chars = -3)
+- Built ConfidenceIndicator.tsx: displays the system's confidence with:
+  - Animated confidence bar (emerald/amber/rose based on level)
+  - High/Moderate/Low label
+  - 6 computed factors with met/unmet indicators
+  - Explanation: "Confidence rises with more evidence, balanced scoring, specific notes, and verbatim quotes"
+- Integrated ConfidenceIndicator into EvidenceView between the recommendation hero and the scores section.
+- Agent Browser verification:
+  - API key settings: opened from user dropdown, shows all 6 providers with "Add key" buttons, "No keys configured" status. Added a Z.ai key → status changed to "1 key active — your simulations use your keys", masked key "20f9b7••••••••mbeM" displayed.
+  - Confidence indicator: full sim→evaluate→recommend flow completed; evidence view shows "System confidence: 96% HIGH" with all 6 factors (Evidence count: 5+ items, Score differentiation: balanced, Notes specificity: detailed, Balanced view: strengths + concerns, Verbatim quotes: present, Summary depth: substantive). No runtime errors.
+
+Stage Summary:
+- Two major features added:
+  1. Bring-your-own API keys — users are guided through adding their own provider keys, making the provider-agnostic architecture tangible and user-controlled. Keys are used in preference to the platform pool.
+  2. LLM confidence scoring — every AI-generated evaluation now includes a transparent confidence score (0-100) computed from 6 measurable factors, displayed with an animated indicator and factor breakdown. This makes the AI's self-assessment inspectable.
+- TwinHire now has 28 components. The settings panel is accessible from the user dropdown.
+- Artifacts: prisma/schema.prisma (UserApiKey), src/app/api/user/api-keys/{route,[id]/route}.ts, src/components/twinhire/{ApiKeySettings,ConfidenceIndicator}.tsx, updated Nav/page.tsx/EvidenceView/types.ts/evaluate route.
+- Lint clean; all features browser-verified; pushed to GitHub.
