@@ -1,6 +1,12 @@
 // TwinHire LLM orchestration layer.
 // Provider-independent wrapper over z-ai-web-dev-sdk.
 // Every intelligence component routes through here so models / fallbacks can be swapped.
+//
+// DUAL-MODE OPERATION:
+//  - Sandbox (local dev): uses the z-ai-web-dev-sdk with internal-api.z.ai (config file)
+//  - Vercel (production): uses the public Z.ai API at api.z.ai/api/paas/v4 with an API key
+//    (ZAI_PUBLIC_API_KEY env var). This is needed because internal-api.z.ai resolves to
+//    private IPs on Vercel's serverless network.
 
 import ZAI from "z-ai-web-dev-sdk"
 import fs from "fs"
@@ -16,14 +22,27 @@ interface ZaiConfig {
 }
 
 /**
- * Load the z-ai-web-dev-sdk config.
- * Priority:
- *  1. Config file (local dev: /etc/.z-ai-config)
- *  2. Environment variables (Vercel/serverless: ZAI_* env vars)
- *  3. Write env-var config to os.homedir() for the SDK to find
+ * Detect which mode we're in:
+ *  - "public-api" if ZAI_PUBLIC_API_KEY is set (Vercel production)
+ *  - "sdk" if a z-ai config file exists (sandbox/local dev)
  */
+function getMode(): "public-api" | "sdk" {
+  if (process.env.ZAI_PUBLIC_API_KEY) return "public-api"
+  const configPaths = [
+    path.join(process.cwd(), ".z-ai-config"),
+    path.join(os.homedir(), ".z-ai-config"),
+    "/etc/.z-ai-config",
+  ]
+  if (configPaths.some((p) => { try { return fs.existsSync(p) } catch { return false } })) {
+    return "sdk"
+  }
+  // If no config file but ZAI_* env vars exist, try SDK mode (might fail)
+  return "public-api"
+}
+
+// ── SDK mode (sandbox) ───────────────────────────────────────────────
+
 function loadZaiConfig(): ZaiConfig | null {
-  // 1. Check if a config file already exists (local dev)
   const configPaths = [
     path.join(process.cwd(), ".z-ai-config"),
     path.join(os.homedir(), ".z-ai-config"),
@@ -39,27 +58,7 @@ function loadZaiConfig(): ZaiConfig | null {
       // continue
     }
   }
-
-  // 2. Build config from env vars (Vercel)
-  const { ZAI_BASE_URL, ZAI_API_KEY, ZAI_CHAT_ID, ZAI_TOKEN, ZAI_USER_ID } = process.env
-  if (!ZAI_CHAT_ID && !ZAI_TOKEN) return null
-
-  const config: ZaiConfig = {
-    baseUrl: ZAI_BASE_URL || "https://internal-api.z.ai/v1",
-    apiKey: ZAI_API_KEY || "Z.ai",
-  }
-  if (ZAI_CHAT_ID) config.chatId = ZAI_CHAT_ID
-  if (ZAI_TOKEN) config.token = ZAI_TOKEN
-  if (ZAI_USER_ID) config.userId = ZAI_USER_ID
-
-  // 3. Try to write to os.homedir() so the SDK's loadConfig finds it
-  try {
-    fs.writeFileSync(path.join(os.homedir(), ".z-ai-config"), JSON.stringify(config))
-  } catch {
-    // If write fails, we'll construct ZAI directly
-  }
-
-  return config
+  return null
 }
 
 let _zai: ZAI | null = null
@@ -68,36 +67,72 @@ async function getClient() {
   if (!_zai) {
     const config = loadZaiConfig()
     if (config) {
-      // Construct ZAI directly with our config (bypasses file-based loadConfig)
       _zai = new ZAI(config)
     } else {
-      // Fall back to the standard create() which reads from config files
       _zai = await ZAI.create()
     }
   }
   return _zai
 }
 
-/**
- * Low-level chat completion. Returns raw text.
- */
-export async function complete(systemPrompt: string, userPrompt: string): Promise<string> {
+async function completeViaSdk(systemPrompt: string, userPrompt: string): Promise<string> {
   const zai = await getClient()
-  try {
-    const completion = await zai.chat.completions.create({
+  const completion = await zai.chat.completions.create({
+    messages: [
+      { role: "assistant", content: systemPrompt },
+      { role: "user", content: userPrompt },
+    ],
+    thinking: { type: "disabled" },
+  })
+  return completion.choices[0]?.message?.content ?? ""
+}
+
+// ── Public API mode (Vercel) ─────────────────────────────────────────
+
+const PUBLIC_API_URL = "https://api.z.ai/api/paas/v4/chat/completions"
+const PUBLIC_MODEL = "glm-4-plus"
+
+async function completeViaPublicApi(systemPrompt: string, userPrompt: string): Promise<string> {
+  const apiKey = process.env.ZAI_PUBLIC_API_KEY!
+  const res = await fetch(PUBLIC_API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: PUBLIC_MODEL,
       messages: [
-        { role: "assistant", content: systemPrompt },
+        { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
       ],
-      thinking: { type: "disabled" },
-    })
-    const content = completion.choices[0]?.message?.content ?? ""
-    return content
+    }),
+  })
+  if (!res.ok) {
+    const body = await res.text()
+    throw new Error(`Public Z.ai API error ${res.status}: ${body.slice(0, 200)}`)
+  }
+  const data = await res.json()
+  return data.choices?.[0]?.message?.content ?? ""
+}
+
+// ── Unified entry point ──────────────────────────────────────────────
+
+/**
+ * Low-level chat completion. Returns raw text.
+ * Automatically uses the SDK in the sandbox, or the public Z.ai API on Vercel.
+ */
+export async function complete(systemPrompt: string, userPrompt: string): Promise<string> {
+  const mode = getMode()
+  try {
+    if (mode === "public-api") {
+      return await completeViaPublicApi(systemPrompt, userPrompt)
+    }
+    return await completeViaSdk(systemPrompt, userPrompt)
   } catch (err) {
-    // Surface the underlying cause for debugging on Vercel
     const cause = err instanceof Error ? err.cause : undefined
     throw new Error(
-      `LLM request failed: ${err instanceof Error ? err.message : String(err)}` +
+      `LLM request failed (${mode}): ${err instanceof Error ? err.message : String(err)}` +
       (cause ? ` (cause: ${cause instanceof Error ? cause.message : String(cause)})` : ""),
     )
   }
@@ -129,16 +164,13 @@ export async function completeJson<T = unknown>(
 
 function extractJson<T>(raw: string): T | null {
   if (!raw) return null
-  // Remove markdown code fences
   let text = raw.trim()
   text = text.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "")
-  // Try direct parse
   try {
     return JSON.parse(text) as T
   } catch {
     // fall through
   }
-  // Extract first balanced { ... } or [ ... ]
   const start = text.search(/[\[{]/)
   if (start === -1) return null
   const open = text[start]
