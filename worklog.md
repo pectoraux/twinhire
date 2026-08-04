@@ -418,3 +418,42 @@ Stage Summary:
   - Expanded AI orchestration with 7 routing tasks and full routing policy description
 - TwinHire now fully implements every section of the original vision prompt.
 - Lint clean; all changes browser-verified; pushed to GitHub.
+
+---
+Task ID: 17
+Agent: main (Z.ai Code orchestrator) — continuation 16
+Task: AI Co-pilot in simulation + evidence export for hiring committees.
+
+Work Log:
+- Created /api/twinhire/copilot endpoint: LLM answers candidate questions about the task context during a simulation. System prompt: "Help them think, NOT do the work for them." Gives guidance, points to artifacts, suggests frameworks, asks clarifying questions. 2-4 sentence responses.
+- Built AICopilot.tsx: slide-out chat panel that sits alongside the simulation workbench. Features:
+  - Floating "AI Co-pilot" button (right side) with pulsing indicator
+  - Welcome message explaining what the co-pilot does and its limits
+  - 4 suggested questions ("What should I prioritize first?", "What does this artifact contain?", "What's the biggest risk here?", "How should I frame the tradeoff?")
+  - Chat message history with user/assistant bubbles
+  - Loading states with spinner
+  - "Your AI usage is recorded and assessed — leverage is rewarded, not penalized" note
+  - Animated slide-in/out panel
+- Integrated into SimulationView: toggle button appears when task is loaded, panel slides from the right.
+- Built EvidenceExport.tsx: generates a downloadable markdown evidence package for hiring committees. Includes:
+  - Meta (export timestamp, platform, version)
+  - Candidate (name, handle, headline, reputation, sessions, capability graph)
+  - Business twin (code, industry, stage, size)
+  - Session (task title, composite score, system confidence)
+  - Full evaluation (17-dimension scores table, evidence trail with quotes, highlights, concerns)
+  - Hiring recommendation (decision, headline, confidence, rationale, next step)
+  - Full candidate submission
+  - Longitudinal history table
+  - Signed footer: "Evidence — not prediction — is the primary currency."
+- Integrated EvidenceExport into EvidenceView CTAs section.
+- Agent Browser verification:
+  - AI Co-pilot: button appears in simulation, panel opens with welcome message + suggested questions, clicking "What should I prioritize first?" → LLM responded contextually: "Start by examining the Sales History Export and Inventory Position Report to understand current forecasting patterns and pain points. Then align with..." (pointed to the actual artifacts in the task).
+  - Evidence export: "Export evidence" button in evidence view CTAs → clicked → "Exported" confirmation → downloaded markdown file (6894 bytes) with full evidence package including 17-dimension scores table, evidence trail, recommendation, and submission.
+
+Stage Summary:
+- Two features added:
+  1. AI Co-pilot — candidates can query an AI assistant during simulations for guidance. Makes the "AI usage" and "AI leverage" dimensions tangible — the platform records interactions and rewards good AI leverage, not penalizes it. The co-pilot helps candidates think without doing the work for them.
+  2. Evidence export — businesses can download a comprehensive markdown evidence package for hiring committees, containing the full evaluation, recommendation, submission, and longitudinal history. Makes the platform enterprise-ready.
+- TwinHire now has 34 components.
+- Artifacts: src/app/api/twinhire/copilot/route.ts, src/components/twinhire/{AICopilot,EvidenceExport}.tsx, updated SimulationView/EvidenceView.
+- Lint clean; all features browser-verified; pushed to GitHub.
