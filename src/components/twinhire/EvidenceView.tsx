@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   AlertTriangle,
@@ -27,6 +28,7 @@ import { CandidateProfilePanel } from "./CandidateProfilePanel";
 import { NetworkBenchmarks } from "./NetworkBenchmarks";
 import { CandidateJourney } from "./CandidateJourney";
 import { ConfidenceIndicator } from "./ConfidenceIndicator";
+import { SimulationDebrief } from "./SimulationDebrief";
 import { cn } from "@/lib/utils";
 import type {
   BusinessTwinView,
@@ -96,6 +98,35 @@ export function EvidenceView({
   onNavigate: (v: ViewKey) => void;
   onAnotherChallenge: () => void;
 }) {
+  const [debrief, setDebrief] = useState<{
+    modelAnswer: string
+    whatThisTested: string
+    comparison: { candidateDidWell: string[]; candidateMissed: string[]; keyDifference: string }
+    learningEdge: string
+  } | null>(null);
+  const [debriefLoading, setDebriefLoading] = useState(false);
+
+  const handleRequestDebrief = async () => {
+    // We need the sessionId — get it from the most recent history entry
+    const latest = history[history.length - 1];
+    if (!latest) return;
+    setDebriefLoading(true);
+    try {
+      const res = await fetch("/api/twinhire/debrief", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId: latest.sessionId }),
+      });
+      if (!res.ok) throw new Error("debrief failed");
+      const data = await res.json();
+      setDebrief(data.debrief);
+    } catch {
+      // silent
+    } finally {
+      setDebriefLoading(false);
+    }
+  };
+
   if (!evaluation) {
     return (
       <div className="mx-auto max-w-3xl px-4 py-24 text-center text-muted-foreground">
@@ -189,6 +220,15 @@ export function EvidenceView({
             <ConfidenceIndicator confidence={evaluation.systemConfidence} />
           </div>
         )}
+
+        {/* Simulation debrief — model answer + comparison */}
+        <div className="mt-6">
+          <SimulationDebrief
+            debrief={debrief}
+            loading={debriefLoading}
+            onRequest={handleRequestDebrief}
+          />
+        </div>
 
         {/* Scores: radar + bars */}
         <div className="mt-8 grid gap-6 lg:grid-cols-[420px_1fr]">

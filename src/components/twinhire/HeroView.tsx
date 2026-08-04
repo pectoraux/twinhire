@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useState } from "react";
 import {
   ArrowRight,
   Boxes,
@@ -19,6 +20,7 @@ import { CountUp } from "./primitives";
 import { NetworkGraph } from "./NetworkGraph";
 import { NetworkEffectsPanel } from "./NetworkEffectsPanel";
 import { LiveActivityFeed } from "./LiveActivityFeed";
+import { RoleSwitcher, type Role } from "./RoleSwitcher";
 import { Button } from "@/components/ui/button";
 import type { ViewKey } from "./Nav";
 
@@ -49,6 +51,7 @@ const TRADITIONAL_VS = [
 ];
 
 export function HeroView({ onNavigate }: { onNavigate: (v: ViewKey) => void }) {
+  const [role, setRole] = useState<Role>("business");
   return (
     <div className="relative overflow-hidden bg-grain">
       {/* Ambient gradient washes */}
@@ -212,6 +215,18 @@ export function HeroView({ onNavigate }: { onNavigate: (v: ViewKey) => void }) {
               ))}
             </ul>
           </div>
+        </div>
+      </section>
+
+      {/* ROLE-BASED PERSPECTIVES */}
+      <section className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Two sides, one network"
+          title="Whether you're hiring or being hired"
+          desc="TwinHire serves both businesses and candidates — each with a different entry point into the same intelligence network."
+        />
+        <div className="mt-8">
+          <RoleSwitcher role={role} onChange={setRole} onNavigate={onNavigate} />
         </div>
       </section>
 
