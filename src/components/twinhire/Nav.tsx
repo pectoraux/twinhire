@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { Boxes, LogOut, Moon, Shield, Sparkles, Sun, User } from "lucide-react";
+import { Boxes, Key, LogOut, Moon, Settings, Shield, Sparkles, Sun, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { LiveDot } from "./primitives";
 import { Button } from "@/components/ui/button";
@@ -33,6 +33,7 @@ export function Nav({
   onAuthClick,
   onSignOut,
   onAdminClick,
+  onSettingsClick,
   adminMode,
   userEmail,
 }: {
@@ -44,6 +45,7 @@ export function Nav({
   onAuthClick: () => void;
   onSignOut: () => void;
   onAdminClick: () => void;
+  onSettingsClick: () => void;
   adminMode: boolean;
   userEmail?: string | null;
 }) {
@@ -165,6 +167,10 @@ export function Nav({
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={onSettingsClick} className="cursor-pointer">
+                    <Key className="mr-2 h-4 w-4" />
+                    API keys
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={onSignOut} className="cursor-pointer text-rose-600 focus:text-rose-600">
                     <LogOut className="mr-2 h-4 w-4" />
                     Sign out

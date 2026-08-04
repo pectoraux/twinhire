@@ -12,6 +12,7 @@ import { SimulationView } from "@/components/twinhire/SimulationView";
 import { EvidenceView } from "@/components/twinhire/EvidenceView";
 import { AuthModal } from "@/components/twinhire/AuthModal";
 import { AdminPanel } from "@/components/twinhire/AdminPanel";
+import { ApiKeySettings } from "@/components/twinhire/ApiKeySettings";
 import type { HistorySession } from "@/components/twinhire/EvidenceTimeline";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -27,6 +28,7 @@ export default function Home() {
   const { data: session, status } = useSession();
   const [authOpen, setAuthOpen] = useState(false);
   const [adminMode, setAdminMode] = useState(false);
+  const [settingsMode, setSettingsMode] = useState(false);
   const [view, setView] = useState<ViewKey>("hero");
   const [twins, setTwins] = useState<BusinessTwinView[]>([]);
   const [candidate, setCandidate] = useState<CandidateView | null>(null);
@@ -100,6 +102,7 @@ export default function Home() {
       }
       setView(v);
       setAdminMode(false);
+      setSettingsMode(false);
       if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
     },
     [status],
@@ -224,13 +227,22 @@ export default function Home() {
         isAdmin={isAdmin}
         onAuthClick={() => setAuthOpen(true)}
         onSignOut={() => signOut({ callbackUrl: "/" })}
-        onAdminClick={() => setAdminMode((v) => !v)}
+        onAdminClick={() => {
+          setAdminMode((v) => !v);
+          setSettingsMode(false);
+        }}
+        onSettingsClick={() => {
+          setSettingsMode((v) => !v);
+          setAdminMode(false);
+        }}
         adminMode={adminMode}
         userEmail={session?.user?.email}
       />
 
       <main className="flex-1">
-        {adminMode && isAdmin ? (
+        {settingsMode && isAuthenticated ? (
+          <ApiKeySettings onClose={() => setSettingsMode(false)} />
+        ) : adminMode && isAdmin ? (
           <AdminPanel onClose={() => setAdminMode(false)} twins={twins} />
         ) : (
           <AnimatePresence mode="wait">

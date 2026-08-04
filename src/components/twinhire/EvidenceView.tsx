@@ -26,6 +26,7 @@ import { OutcomeLearning } from "./OutcomeLearning";
 import { CandidateProfilePanel } from "./CandidateProfilePanel";
 import { NetworkBenchmarks } from "./NetworkBenchmarks";
 import { CandidateJourney } from "./CandidateJourney";
+import { ConfidenceIndicator } from "./ConfidenceIndicator";
 import { cn } from "@/lib/utils";
 import type {
   BusinessTwinView,
@@ -180,6 +181,13 @@ export function EvidenceView({
               </div>
             </div>
           </motion.div>
+        )}
+
+        {/* System confidence in the LLM evaluation */}
+        {evaluation.systemConfidence !== undefined && (
+          <div className="mt-6">
+            <ConfidenceIndicator confidence={evaluation.systemConfidence} />
+          </div>
         )}
 
         {/* Scores: radar + bars */}

@@ -102,6 +102,10 @@ Requirements:
     // Normalize/validate scores so the UI always has all 10 metrics
     evaluation.scores = ensureAllMetrics(evaluation.scores)
 
+    // Compute system confidence in this LLM-generated evaluation.
+    // Based on: evidence count, score distribution, response richness.
+    evaluation.systemConfidence = computeConfidence(evaluation, submission)
+
     await db.workSession.update({
       where: { id: sessionId },
       data: {
@@ -140,4 +144,58 @@ function clamp(n: unknown): number {
   const v = typeof n === "number" ? n : Number(n)
   if (!isFinite(v)) return 50
   return Math.max(0, Math.min(100, Math.round(v)))
+}
+
+/**
+ * Compute the system's confidence in an LLM-generated evaluation.
+ *
+ * Factors:
+ *  - Evidence count: more evidence items = higher confidence
+ *  - Score variance: extreme scores (all 100s or all 0s) = lower confidence
+ *  - Notes richness: longer score notes = higher confidence
+ *  - Highlights + red flags: having both = higher confidence (balanced view)
+ *  - Summary length: a substantive summary = higher confidence
+ *  - Quotes in evidence: verbatim quotes = higher confidence
+ *
+ * Returns 0-100.
+ */
+function computeConfidence(ev: Evaluation, submission: string): number {
+  let confidence = 40 // baseline
+
+  // Evidence count: 5-8 is ideal, more is fine
+  const evidenceCount = ev.evidence?.length ?? 0
+  confidence += Math.min(25, evidenceCount * 3.5)
+
+  // Score variance: moderate variance is healthy; extreme variance or zero variance is suspicious
+  const scores = ev.scores.map((s) => s.score)
+  if (scores.length > 1) {
+    const mean = scores.reduce((a, b) => a + b, 0) / scores.length
+    const variance = scores.reduce((a, b) => a + (b - mean) ** 2, 0) / scores.length
+    const stdDev = Math.sqrt(variance)
+    // Ideal stdDev is 8-20 (differentiated but not chaotic)
+    if (stdDev >= 5 && stdDev <= 25) confidence += 10
+    else if (stdDev < 3) confidence -= 5 // all scores the same = suspicious
+    else confidence += 5
+  }
+
+  // Notes richness: average note length
+  const avgNoteLen = ev.scores.reduce((a, s) => a + (s.note?.length ?? 0), 0) / Math.max(1, ev.scores.length)
+  if (avgNoteLen > 80) confidence += 8
+  else if (avgNoteLen > 40) confidence += 4
+
+  // Balanced view: both highlights and red flags
+  if (ev.highlights?.length > 0 && ev.redFlags?.length > 0) confidence += 7
+  else if (ev.highlights?.length > 0 || ev.redFlags?.length > 0) confidence += 3
+
+  // Summary length
+  if ((ev.summary?.length ?? 0) > 150) confidence += 5
+
+  // Quotes in evidence (verbatim from submission)
+  const quotedEvidence = ev.evidence?.filter((e) => e.quote && e.quote.length > 5) ?? []
+  confidence += Math.min(5, quotedEvidence.length * 1.5)
+
+  // Submission length factor (longer submissions = more to evaluate = slightly less confident)
+  if (submission.length > 4000) confidence -= 3
+
+  return Math.max(20, Math.min(98, Math.round(confidence)))
 }

@@ -121,6 +121,9 @@ export interface Evaluation {
   aiLeverageAssessment: string
   redFlags: string[]
   highlights: string[]
+  /// System confidence in this evaluation (0-100), computed from evidence
+  /// count, score variance, and response richness.
+  systemConfidence?: number
 }
 
 export interface Recommendation {

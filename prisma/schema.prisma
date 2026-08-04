@@ -26,6 +26,31 @@ model User {
   candidateId  String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  apiKeys      UserApiKey[]
+}
+
+/// Bring-your-own API keys. Each user can add keys for different AI providers.
+/// The LLM client uses the user's keys when available, falling back to the platform pool.
+model UserApiKey {
+  id           String   @id @default(cuid())
+  userId       String
+  /// openai | anthropic | gemini | deepseek | mistral | groq | zai
+  provider     String
+  /// The API key (stored as-is for demo; in production this would be encrypted at rest)
+  keyValue     String
+  /// Whether this key is active and should be used
+  isActive     Boolean  @default(true)
+  /// Optional: a label the user gives this key
+  label        String?
+  /// When the key was last verified working
+  lastVerifiedAt DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user         User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, provider])
 }
 
 /// Sign-ups land here until an admin creates their account.
