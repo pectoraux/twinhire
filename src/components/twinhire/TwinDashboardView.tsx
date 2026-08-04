@@ -17,6 +17,7 @@ import {
   Users,
 } from "lucide-react";
 import { CategoryBadge, FidelityRing, ScoreBar, TrendPill, LiveDot } from "./primitives";
+import { TwinKnowledgeGraph } from "./TwinKnowledgeGraph";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -244,6 +245,11 @@ export function TwinDashboardView({
 
           {/* Expandable long-tail backlog */}
           <BacklogList twin={twin} />
+        </div>
+
+        {/* Twin knowledge graph */}
+        <div className="mt-10">
+          <TwinKnowledgeGraph twin={twin} />
         </div>
       </div>
     </div>

@@ -43,3 +43,24 @@ Stage Summary:
 - The abstract vision (network effects, learning twins, provider independence) is now tangible and observable in the UI, not just described in text.
 - Note: Turbopack dev overlay shows a stale "Ecmascript file had an error" for TwinLearningPanel.tsx:27:10 that persists across cache clears, but the module compiles and renders correctly (verified via Agent Browser — the evidence view with both new panels renders with full content and no runtime errors). This is a known Turbopack dev-overlay caching quirk, not an actual defect.
 - Artifacts added: src/components/twinhire/{NetworkGraph,TwinLearningPanel,AIOrchestrationStrip}.tsx; extended prisma schema, seed.ts, mappers.ts, types.ts, HeroView.tsx, TwinDashboardView.tsx, EvidenceView.tsx.
+
+---
+Task ID: 3
+Agent: main (Z.ai Code orchestrator) — continuation 2
+Task: Make the "longitudinal evidence" and "strict anonymization until mutual opt-in" product principles tangible and interactive.
+
+Work Log:
+- Added /api/twinhire/history endpoint returning all evaluated sessions for the candidate (longitudinal evidence) — twin code, task title, avg score, decision, summary, top strength/concern, full scores. Verified: returns 6 sessions from prior testing.
+- Built EvidenceTimeline.tsx: a longitudinal evidence section showing (1) a performance trajectory chart with composite score + reputation compounding over sessions, and (2) an evidence trail timeline — each session as a card with decision dot, score, summary, top strength/concern, connected by a timeline rail.
+- Built MutualOptInDialog.tsx: a 4-step interactive flow making the anonymization principle tangible — (1) candidate opts in, (2) pending mutual consent (both identities hidden, "Shared with business: Anonymized evidence only"), (3) business opts in, (4) identities revealed with both parties' cards. Includes progress indicators and a demo shortcut to simulate the business opting in.
+- Built TwinKnowledgeGraph.tsx: an interactive SVG graph in the dashboard linking a selected capability gap to its connected KPIs, departments, and problems. Clicking a different capability re-centers the graph. Surfaces the "knowledge graph" architecture from the vision.
+- Wired everything in: page.tsx now fetches history on mount + after each evaluation; EvidenceView renders the timeline after the learning panel and the opt-in dialog in the recommendation hero; TwinDashboardView renders the knowledge graph after the capability ranking.
+- Agent Browser verification: dashboard knowledge graph renders and is interactive (clicking "Unified profitability & LTV model" re-centers the graph); full sim→evaluate→recommend flow completes; evidence view shows the longitudinal timeline with all 6 sessions (Session 1: 53 → Session 6: 64, reputation compounding); mutual opt-in dialog flows end-to-end (candidate opts in → pending → business opts in → "Identities revealed: A. Okafor / TWIN-129"); no runtime errors; mobile has no horizontal overflow.
+
+Stage Summary:
+- Two core product principles are now interactive, not just described:
+  1. "Longitudinal evidence, not one-shot" — the EvidenceTimeline shows every session across the network with score/reputation progression, making the compounding visible.
+  2. "Strict anonymization until mutual opt-in" — the MutualOptInDialog enforces a two-party consent flow before either identity is revealed.
+- The TwinKnowledgeGraph makes the "graphs" architecture (capability/KPI/department/problem connections) tangible in the dashboard.
+- Artifacts added: src/app/api/twinhire/history/route.ts, src/components/twinhire/{EvidenceTimeline,MutualOptInDialog,TwinKnowledgeGraph}.tsx; integrated into page.tsx, EvidenceView.tsx, TwinDashboardView.tsx.
+- Lint clean; dev server healthy; all new flows browser-verified.

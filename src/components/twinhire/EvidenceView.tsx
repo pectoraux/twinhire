@@ -19,6 +19,8 @@ import { Badge } from "@/components/ui/badge";
 import { ScoreBar, SignalChip } from "./primitives";
 import { TwinLearningPanel } from "./TwinLearningPanel";
 import { AIOrchestrationStrip } from "./AIOrchestrationStrip";
+import { EvidenceTimeline, type HistorySession } from "./EvidenceTimeline";
+import { MutualOptInDialog } from "./MutualOptInDialog";
 import { cn } from "@/lib/utils";
 import type {
   BusinessTwinView,
@@ -72,6 +74,7 @@ export function EvidenceView({
   recommendation,
   sessionAvg,
   taskTitle,
+  history,
   onNavigate,
   onAnotherChallenge,
 }: {
@@ -81,6 +84,7 @@ export function EvidenceView({
   recommendation: Recommendation | null;
   sessionAvg: number | null;
   taskTitle: string;
+  history: HistorySession[];
   onNavigate: (v: ViewKey) => void;
   onAnotherChallenge: () => void;
 }) {
@@ -143,6 +147,18 @@ export function EvidenceView({
                         <Quote className="h-3 w-3" /> {r}
                       </span>
                     ))}
+                  </div>
+                )}
+                {candidate && twin && (
+                  <div className="mt-5">
+                    <MutualOptInDialog
+                      recommendation={recommendation}
+                      twinCode={twin.code}
+                      twinIndustry={twin.industry}
+                      candidateName={candidate.displayName}
+                      avgScore={avg}
+                      sessionCount={Math.max(candidate.sessionsCompleted, history.length)}
+                    />
                   </div>
                 )}
               </div>
@@ -337,6 +353,11 @@ export function EvidenceView({
             learnedFromSession={deriveLearned(evaluation)}
           />
           <AIOrchestrationStrip />
+        </div>
+
+        {/* Longitudinal evidence timeline */}
+        <div className="mt-8">
+          <EvidenceTimeline sessions={history} reputation={candidate?.reputation ?? 50} />
         </div>
 
         {/* CTAs */}

@@ -8,6 +8,7 @@ import { HeroView } from "@/components/twinhire/HeroView";
 import { TwinDashboardView } from "@/components/twinhire/TwinDashboardView";
 import { SimulationView } from "@/components/twinhire/SimulationView";
 import { EvidenceView } from "@/components/twinhire/EvidenceView";
+import type { HistorySession } from "@/components/twinhire/EvidenceTimeline";
 import { useToast } from "@/hooks/use-toast";
 import type {
   BusinessTwinView,
@@ -36,6 +37,7 @@ export default function Home() {
   const [recommendation, setRecommendation] = useState<Recommendation | null>(null);
   const [sessionAvg, setSessionAvg] = useState<number | null>(null);
   const [evidenceTwin, setEvidenceTwin] = useState<BusinessTwinView | null>(null);
+  const [history, setHistory] = useState<HistorySession[]>([]);
 
   const { toast } = useToast();
 
@@ -64,6 +66,21 @@ export default function Home() {
   useEffect(() => {
     void loadNetwork();
   }, [loadNetwork]);
+
+  const loadHistory = useCallback(async () => {
+    try {
+      const res = await fetch("/api/twinhire/history");
+      if (!res.ok) throw new Error("Failed to load history");
+      const data = (await res.json()) as { sessions: HistorySession[] };
+      setHistory(data.sessions);
+    } catch {
+      // silent — history is a nice-to-have
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadHistory();
+  }, [loadHistory]);
 
   const navigate = useCallback((v: ViewKey) => {
     setView(v);
@@ -142,8 +159,9 @@ export default function Home() {
         setSessionAvg(recData.sessionAvg);
         setEvidenceTwin(selectedTwin);
 
-        // Refresh candidate (sessionsCompleted / reputation) for the closed-loop feel
+        // Refresh candidate (sessionsCompleted / reputation) + longitudinal history
         void loadNetwork();
+        void loadHistory();
 
         toast({
           title: "Evaluation complete",
@@ -160,7 +178,7 @@ export default function Home() {
         setEvaluating(false);
       }
     },
-    [sessionId, selectedTwin, navigate, toast, loadNetwork],
+    [sessionId, selectedTwin, navigate, toast, loadNetwork, loadHistory],
   );
 
   const handleAnotherChallenge = useCallback(() => {
@@ -224,6 +242,7 @@ export default function Home() {
                 recommendation={recommendation}
                 sessionAvg={sessionAvg}
                 taskTitle={task?.taskTitle ?? ""}
+                history={history}
                 onNavigate={navigate}
                 onAnotherChallenge={handleAnotherChallenge}
               />
