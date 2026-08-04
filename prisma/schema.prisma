@@ -1,0 +1,89 @@
+// TwinHire — Evidence-Based Recruitment Operating System
+// Prisma schema (SQLite). Graphs/metrics stored as JSON strings (parsed in code).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+/// A continuously evolving AI Digital Twin of a real business (anonymized).
+model BusinessTwin {
+  id            String   @id @default(cuid())
+  /// Human-friendly anonymized code, e.g. "TWIN-482"
+  code          String   @unique
+  industry      String
+  sizeBand      String
+  stage         String
+  region        String
+  /// Short anonymized tagline shown to candidates
+  tagline       String
+  /// JSON array of problem statements (string[])
+  problems      String
+  /// JSON array of strategic objectives (string[])
+  objectives    String
+  /// JSON array of current KPIs {label, value, unit, trend}
+  kpis          String
+  /// JSON array of capability gaps (CapabilityGap[])
+  capabilities  String
+  /// JSON object describing org/departments for the twin's "feel"
+  orgSnapshot   String
+  /// Twin fidelity score 0-100 — improves as outcomes are collected
+  fidelity      Int      @default(72)
+  /// Number of work sessions observed inside this twin
+  sessionsObserved Int   @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  sessions      WorkSession[]
+}
+
+/// A candidate represented as a continuously evolving capability graph (not a resume).
+model Candidate {
+  id              String   @id @default(cuid())
+  handle          String   @unique
+  displayName     String
+  headline        String
+  /// JSON: capability graph {domain, level, confidence}
+  capabilityGraph String
+  /// JSON: work preferences / availability / languages etc.
+  profile         String
+  /// Aggregated reputation 0-100
+  reputation      Int      @default(50)
+  /// Count of work sessions completed across twins
+  sessionsCompleted Int    @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  sessions        WorkSession[]
+}
+
+/// A candidate performing real work inside a business twin. The core unit of evidence.
+model WorkSession {
+  id            String   @id @default(cuid())
+  twinId        String
+  candidateId   String
+  /// Which capability gap this session exercises
+  capabilityKey String
+  taskTitle     String
+  /// The brief the candidate must respond to (LLM-generated)
+  taskBrief     String
+  /// Operational context / artifact bundle given to the candidate
+  contextBundle String
+  status        String   @default("assigned") // assigned | submitted | evaluated
+  /// The candidate's submitted work (markdown)
+  submission    String?
+  submittedAt   DateTime?
+  /// JSON: LLM performance evaluation {metrics:{}, scores:{}, evidence:[], notes}
+  evaluation    String?
+  /// Final hiring recommendation derived from evaluation
+  recommendation String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  twin           BusinessTwin @relation(fields: [twinId], references: [id], onDelete: Cascade)
+  candidate     Candidate    @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+}
