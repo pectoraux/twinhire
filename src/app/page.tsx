@@ -1,15 +1,20 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useSession, signOut } from "next-auth/react";
 import { AnimatePresence, motion } from "framer-motion";
+import { LogOut, Shield } from "lucide-react";
 import { Nav, type ViewKey } from "@/components/twinhire/Nav";
 import { Footer } from "@/components/twinhire/Footer";
 import { HeroView } from "@/components/twinhire/HeroView";
 import { TwinDashboardView } from "@/components/twinhire/TwinDashboardView";
 import { SimulationView } from "@/components/twinhire/SimulationView";
 import { EvidenceView } from "@/components/twinhire/EvidenceView";
+import { AuthModal } from "@/components/twinhire/AuthModal";
+import { AdminPanel } from "@/components/twinhire/AdminPanel";
 import type { HistorySession } from "@/components/twinhire/EvidenceTimeline";
 import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
 import type {
   BusinessTwinView,
   CandidateView,
@@ -19,6 +24,9 @@ import type {
 } from "@/lib/twinhire/types";
 
 export default function Home() {
+  const { data: session, status } = useSession();
+  const [authOpen, setAuthOpen] = useState(false);
+  const [adminMode, setAdminMode] = useState(false);
   const [view, setView] = useState<ViewKey>("hero");
   const [twins, setTwins] = useState<BusinessTwinView[]>([]);
   const [candidate, setCandidate] = useState<CandidateView | null>(null);
@@ -83,10 +91,19 @@ export default function Home() {
     void loadHistory();
   }, [loadHistory]);
 
-  const navigate = useCallback((v: ViewKey) => {
-    setView(v);
-    if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
+  const navigate = useCallback(
+    (v: ViewKey) => {
+      // Gate non-hero views behind auth
+      if (v !== "hero" && status !== "authenticated") {
+        setAuthOpen(true);
+        return;
+      }
+      setView(v);
+      setAdminMode(false);
+      if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+    [status],
+  );
 
   const handleSelectTwin = useCallback((id: string) => {
     setSelectedTwinId(id);
@@ -194,67 +211,87 @@ export default function Home() {
   }, [navigate]);
 
   const hasSession = !!sessionId || !!evaluation;
+  const isAuthenticated = status === "authenticated";
+  const isAdmin = isAuthenticated && session?.user?.role === "admin";
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <Nav view={view} onNavigate={navigate} hasSession={hasSession} />
+      <Nav
+        view={view}
+        onNavigate={navigate}
+        hasSession={hasSession}
+        isAuthenticated={isAuthenticated}
+        isAdmin={isAdmin}
+        onAuthClick={() => setAuthOpen(true)}
+        onSignOut={() => signOut({ callbackUrl: "/" })}
+        onAdminClick={() => setAdminMode((v) => !v)}
+        adminMode={adminMode}
+        userEmail={session?.user?.email}
+      />
 
       <main className="flex-1">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={view}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          >
-            {view === "hero" && <HeroView onNavigate={navigate} />}
+        {adminMode && isAdmin ? (
+          <AdminPanel onClose={() => setAdminMode(false)} />
+        ) : (
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={view}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            >
+              {view === "hero" && <HeroView onNavigate={navigate} />}
 
-            {view === "dashboard" &&
-              (loadingNetwork ? (
-                <DashboardSkeleton />
-              ) : (
-                <TwinDashboardView
-                  twins={twins}
-                  selectedId={selectedTwinId}
-                  onSelect={handleSelectTwin}
-                  onStartSimulation={handleStartSimulation}
-                  pendingGapKey={generating ? activeGapKey : null}
+              {view === "dashboard" &&
+                (loadingNetwork ? (
+                  <DashboardSkeleton />
+                ) : (
+                  <TwinDashboardView
+                    twins={twins}
+                    selectedId={selectedTwinId}
+                    onSelect={handleSelectTwin}
+                    onStartSimulation={handleStartSimulation}
+                    pendingGapKey={generating ? activeGapKey : null}
+                  />
+                ))}
+
+              {view === "simulate" && (
+                <SimulationView
+                  twin={selectedTwin}
+                  gapTitle={activeGap?.title ?? ""}
+                  gapCategory={activeGap?.category ?? ""}
+                  task={task}
+                  sessionId={sessionId}
+                  generating={generating}
+                  evaluating={evaluating}
+                  onSubmit={handleSubmit}
                 />
-              ))}
+              )}
 
-            {view === "simulate" && (
-              <SimulationView
-                twin={selectedTwin}
-                gapTitle={activeGap?.title ?? ""}
-                gapCategory={activeGap?.category ?? ""}
-                task={task}
-                sessionId={sessionId}
-                generating={generating}
-                evaluating={evaluating}
-                onSubmit={handleSubmit}
-              />
-            )}
-
-            {view === "evidence" && (
-              <EvidenceView
-                twin={evidenceTwin}
-                candidate={candidate}
-                evaluation={evaluation}
-                recommendation={recommendation}
-                sessionAvg={sessionAvg}
-                taskTitle={task?.taskTitle ?? ""}
-                submission={submission}
-                history={history}
-                onNavigate={navigate}
-                onAnotherChallenge={handleAnotherChallenge}
-              />
-            )}
-          </motion.div>
-        </AnimatePresence>
+              {view === "evidence" && (
+                <EvidenceView
+                  twin={evidenceTwin}
+                  candidate={candidate}
+                  evaluation={evaluation}
+                  recommendation={recommendation}
+                  sessionAvg={sessionAvg}
+                  taskTitle={task?.taskTitle ?? ""}
+                  submission={submission}
+                  history={history}
+                  onNavigate={navigate}
+                  onAnotherChallenge={handleAnotherChallenge}
+                />
+              )}
+            </motion.div>
+          </AnimatePresence>
+        )}
       </main>
 
       <Footer />
+
+      {/* Auth modal */}
+      <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
     </div>
   );
 }

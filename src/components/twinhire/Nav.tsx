@@ -2,10 +2,18 @@
 
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { Boxes, Moon, Sun, Sparkles } from "lucide-react";
+import { Boxes, LogOut, Moon, Shield, Sparkles, Sun, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { LiveDot } from "./primitives";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export type ViewKey = "hero" | "dashboard" | "simulate" | "evidence";
 
@@ -20,10 +28,24 @@ export function Nav({
   view,
   onNavigate,
   hasSession,
+  isAuthenticated,
+  isAdmin,
+  onAuthClick,
+  onSignOut,
+  onAdminClick,
+  adminMode,
+  userEmail,
 }: {
   view: ViewKey;
   onNavigate: (v: ViewKey) => void;
   hasSession: boolean;
+  isAuthenticated: boolean;
+  isAdmin: boolean;
+  onAuthClick: () => void;
+  onSignOut: () => void;
+  onAdminClick: () => void;
+  adminMode: boolean;
+  userEmail?: string | null;
 }) {
   const [scrolled, setScrolled] = useState(false);
 
@@ -111,14 +133,55 @@ export function Nav({
             <Sun className="hidden h-4 w-4 dark:block" />
             <Moon className="h-4 w-4 dark:hidden" />
           </Button>
-          <Button
-            size="sm"
-            onClick={() => onNavigate("dashboard")}
-            className="hidden h-9 gap-1.5 rounded-full sm:inline-flex"
-          >
-            <Sparkles className="h-3.5 w-3.5" />
-            Enter the network
-          </Button>
+          {isAuthenticated ? (
+            <>
+              {isAdmin && (
+                <Button
+                  size="sm"
+                  variant={adminMode ? "default" : "outline"}
+                  onClick={onAdminClick}
+                  className="h-9 gap-1.5 rounded-full"
+                >
+                  <Shield className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Admin</span>
+                </Button>
+              )}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center gap-2 rounded-full border border-border/60 bg-card px-2.5 py-1.5 text-sm transition-colors hover:border-foreground/20">
+                    <span className="grid h-6 w-6 place-items-center rounded-full bg-primary text-primary-foreground text-xs font-semibold">
+                      {userEmail?.charAt(0).toUpperCase() ?? "U"}
+                    </span>
+                    <span className="hidden max-w-[120px] truncate sm:inline">{userEmail}</span>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">{userEmail}</p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {isAdmin ? "Admin" : "Candidate"}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={onSignOut} className="cursor-pointer text-rose-600 focus:text-rose-600">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Sign out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
+          ) : (
+            <Button
+              size="sm"
+              onClick={onAuthClick}
+              className="h-9 gap-1.5 rounded-full"
+            >
+              <User className="h-3.5 w-3.5" />
+              Sign in
+            </Button>
+          )}
         </div>
       </div>
 

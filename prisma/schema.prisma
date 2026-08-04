@@ -1,43 +1,63 @@
 // TwinHire — Evidence-Based Recruitment Operating System
-// Prisma schema (SQLite). Graphs/metrics stored as JSON strings (parsed in code).
+// Prisma schema (PostgreSQL / Neon). Graphs/metrics stored as JSON strings.
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
+
+// ── Auth models ──────────────────────────────────────────────────────
+
+/// Platform users — admin, candidate, business. Created by admin from waitlist.
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  /// bcrypt-hashed password
+  passwordHash String
+  /// admin | candidate | business
+  role         String   @default("candidate")
+  /// Linked candidate record (for candidate users)
+  candidateId  String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+/// Sign-ups land here until an admin creates their account.
+model WaitlistEntry {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  /// pending | approved | rejected
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ── Twin models ──────────────────────────────────────────────────────
 
 /// A continuously evolving AI Digital Twin of a real business (anonymized).
 model BusinessTwin {
   id            String   @id @default(cuid())
-  /// Human-friendly anonymized code, e.g. "TWIN-482"
   code          String   @unique
   industry      String
   sizeBand      String
   stage         String
   region        String
-  /// Short anonymized tagline shown to candidates
   tagline       String
-  /// JSON array of problem statements (string[])
   problems      String
-  /// JSON array of strategic objectives (string[])
   objectives    String
-  /// JSON array of current KPIs {label, value, unit, trend}
   kpis          String
-  /// JSON array of capability gaps (CapabilityGap[])
   capabilities  String
-  /// JSON array of lightweight backlog items (CapabilityBacklogItem[])
   capabilityBacklog String
-  /// Total count of capabilities the engine has identified for this twin
   capabilitiesIdentified Int @default(0)
-  /// JSON object describing org/departments for the twin's "feel"
   orgSnapshot   String
-  /// Twin fidelity score 0-100 — improves as outcomes are collected
   fidelity      Int      @default(72)
-  /// Number of work sessions observed inside this twin
   sessionsObserved Int   @default(0)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -51,13 +71,9 @@ model Candidate {
   handle          String   @unique
   displayName     String
   headline        String
-  /// JSON: capability graph {domain, level, confidence}
   capabilityGraph String
-  /// JSON: work preferences / availability / languages etc.
   profile         String
-  /// Aggregated reputation 0-100
   reputation      Int      @default(50)
-  /// Count of work sessions completed across twins
   sessionsCompleted Int    @default(0)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -70,20 +86,14 @@ model WorkSession {
   id            String   @id @default(cuid())
   twinId        String
   candidateId   String
-  /// Which capability gap this session exercises
   capabilityKey String
   taskTitle     String
-  /// The brief the candidate must respond to (LLM-generated)
   taskBrief     String
-  /// Operational context / artifact bundle given to the candidate
   contextBundle String
-  status        String   @default("assigned") // assigned | submitted | evaluated
-  /// The candidate's submitted work (markdown)
+  status        String   @default("assigned")
   submission    String?
   submittedAt   DateTime?
-  /// JSON: LLM performance evaluation {metrics:{}, scores:{}, evidence:[], notes}
   evaluation    String?
-  /// Final hiring recommendation derived from evaluation
   recommendation String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
