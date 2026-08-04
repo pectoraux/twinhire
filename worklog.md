@@ -345,3 +345,43 @@ Stage Summary:
 - TwinHire now has 30 components.
 - Artifacts: src/app/api/twinhire/debrief/route.ts, src/components/twinhire/{SimulationDebrief,RoleSwitcher}.tsx, updated EvidenceView/HeroView.
 - Lint clean; all features browser-verified; pushed to GitHub.
+
+---
+Task ID: 15
+Agent: main (Z.ai Code orchestrator) — continuation 14
+Task: Twin comparison tool + skill benchmark explorer.
+
+Work Log:
+- Built TwinComparison.tsx: side-by-side comparison of two business twins. Features:
+  - Twin A / Twin B dropdown selectors with all 4 twins
+  - Identity cards (code, industry, tagline, stage/size/region, fidelity ring)
+  - Twin maturity comparison (fidelity + sessions observed, with winner highlight)
+  - Top capability gap comparison (each twin's highest-ROI gap with category, problem, ROI bar)
+  - KPI comparison (all KPIs side-by-side with trend pills)
+  - Capability intelligence (identified count + fully scoped gaps)
+  - "Where to work" recommendation that auto-computes which twin has the higher-ROI gap
+- Built SkillExplorer.tsx: aggregate network skill benchmarks across 8 domains. Features:
+  - Network stats (total candidates, network average)
+  - Per-domain cards with: network average, decile distribution bar (bottom→top with gradient fill), 
+    network average marker, candidate count, trend indicator (rising/stable/declining), hottest gap
+  - Legend (decile range, network average, domain count)
+  - Insight: "AI Leverage & Automation has the lowest network average (49/100) but is rising fastest — 
+    the highest-ROI skill gap in the network right now"
+- Integrated: TwinComparison accessible via "Compare twins" button in TwinDashboardView header; 
+  SkillExplorer in HeroView's network section (after NetworkEffectsPanel + LiveActivityFeed).
+- Agent Browser verification:
+  - SkillExplorer: renders with all 8 domains, decile bars, trend indicators, insight. No errors.
+  - TwinComparison: opened from dashboard "Compare twins" button; shows TWIN-129 vs TWIN-317 with 
+    "TWIN-317 has the higher-ROI gap (Carrier paperwork reconciliation at 90/100)"; switched Twin B 
+    to TWIN-482 → recommendation updated to "TWIN-482 has the higher-ROI gap (Lifecycle email at 92/100)". 
+    Fully interactive, no errors.
+
+Stage Summary:
+- Two features added:
+  1. Twin Comparison — candidates/businesses can compare any two twins side-by-side across capability 
+     gaps, KPIs, fidelity, and capability intelligence, with an auto-computed "where to work" recommendation.
+  2. Skill Benchmark Explorer — the network's aggregate intelligence is now browsable, showing decile 
+     distributions, trends, and the highest-ROI skill gaps across 8 domains.
+- TwinHire now has 32 components.
+- Artifacts: src/components/twinhire/{TwinComparison,SkillExplorer}.tsx; updated page.tsx, HeroView, TwinDashboardView.
+- Lint clean; all features browser-verified; pushed to GitHub.
