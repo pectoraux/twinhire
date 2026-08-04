@@ -221,3 +221,22 @@ Stage Summary:
 - To activate LLM flows on production: recharge at https://z.ai/manage-apikey/billing
 - Once recharged, the full simulation → evaluation → recommendation pipeline will work identically on Vercel as on space-z.ai — no code changes needed.
 - Everything else is fully functional on production: auth, database, dashboard, all UI.
+
+---
+Task ID: 11
+Agent: main (Z.ai Code orchestrator) — continuation 10
+Task: Resume feature deepening — add CandidateJourney and NetworkBenchmarks panels.
+
+Work Log:
+- Built CandidateJourney.tsx: visualizes the candidate's path through the TwinHire system as a 5-stage progression (Discover twins → Work inside twins → Generate evidence → Grow reputation → Get hired on evidence). Each stage has completed/active/locked status with appropriate styling, connector arrows, a progress bar, and journey stats (twins explored, sessions completed, evidence items). Makes the "not an application, a progression" principle tangible.
+- Built NetworkBenchmarks.tsx: makes "skill benchmarks improve as more candidates participate" tangible. Shows the candidate's percentile ranking against 847 network candidates, a composite vs network average comparison, and a dimension-by-dimension dual-bar comparison (candidate vs network average) with "+/- vs net" deltas for all 10 performance dimensions. Includes a note that benchmarks compound with every new candidate.
+- Integrated both into EvidenceView: CandidateJourney before the capability graph, NetworkBenchmarks after the longitudinal timeline.
+- Agent Browser verification: full sim→evaluate→recommend flow completes; evidence view renders both new panels with rich content — CandidateJourney shows all 5 stages with milestone counts; NetworkBenchmarks shows "847 candidates", percentile, composite vs network average, and dimension comparisons with "vs net" deltas. No runtime errors.
+
+Stage Summary:
+- Two more vision principles are now tangible product surfaces:
+  1. "As more candidates participate, skill benchmarks improve" → NetworkBenchmarks with percentile + dual-bar dimension comparison.
+  2. The candidate experience as a progression (not an application) → CandidateJourney with 5 earned milestones.
+- TwinHire now has 24 components covering every layer and principle of the vision.
+- Artifacts added: src/components/twinhire/{CandidateJourney,NetworkBenchmarks}.tsx; integrated into EvidenceView.tsx.
+- Lint clean; all flows browser-verified; pushed to GitHub (auto-deploys to Vercel).
