@@ -83,15 +83,24 @@ async function getClient() {
  */
 export async function complete(systemPrompt: string, userPrompt: string): Promise<string> {
   const zai = await getClient()
-  const completion = await zai.chat.completions.create({
-    messages: [
-      { role: "assistant", content: systemPrompt },
-      { role: "user", content: userPrompt },
-    ],
-    thinking: { type: "disabled" },
-  })
-  const content = completion.choices[0]?.message?.content ?? ""
-  return content
+  try {
+    const completion = await zai.chat.completions.create({
+      messages: [
+        { role: "assistant", content: systemPrompt },
+        { role: "user", content: userPrompt },
+      ],
+      thinking: { type: "disabled" },
+    })
+    const content = completion.choices[0]?.message?.content ?? ""
+    return content
+  } catch (err) {
+    // Surface the underlying cause for debugging on Vercel
+    const cause = err instanceof Error ? err.cause : undefined
+    throw new Error(
+      `LLM request failed: ${err instanceof Error ? err.message : String(err)}` +
+      (cause ? ` (cause: ${cause instanceof Error ? cause.message : String(cause)})` : ""),
+    )
+  }
 }
 
 /**

@@ -4,6 +4,10 @@ import { completeJson } from "@/lib/twinhire/llm"
 import { METRIC_LABELS } from "@/lib/twinhire/types"
 import type { Evaluation, MetricScore } from "@/lib/twinhire/types"
 
+// LLM calls can take 30-60s; extend the serverless function timeout.
+export const maxDuration = 60
+export const dynamic = "force-dynamic"
+
 // POST /api/twinhire/evaluate
 // Body: { sessionId, submission }
 // The candidate's work is evaluated by the intelligence engine across 10 dimensions,

@@ -3,6 +3,10 @@ import { db } from "@/lib/db"
 import { completeJson } from "@/lib/twinhire/llm"
 import type { Evaluation, Recommendation } from "@/lib/twinhire/types"
 
+// LLM calls can take 30-60s; extend the serverless function timeout.
+export const maxDuration = 60
+export const dynamic = "force-dynamic"
+
 // POST /api/twinhire/recommend
 // Body: { sessionId }
 // Derives an explainable hiring recommendation from accumulated evidence.
