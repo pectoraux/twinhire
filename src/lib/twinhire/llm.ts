@@ -3,11 +3,49 @@
 // Every intelligence component routes through here so models / fallbacks can be swapped.
 
 import ZAI from "z-ai-web-dev-sdk"
+import fs from "fs"
+import os from "os"
+import path from "path"
+
+/**
+ * Ensure the z-ai-web-dev-sdk config file exists.
+ * Locally, /etc/.z-ai-config is present. On Vercel/serverless, we create it
+ * from environment variables at runtime (writing to os.homedir() which is /tmp).
+ */
+function ensureZaiConfig() {
+  const configPaths = [
+    path.join(process.cwd(), ".z-ai-config"),
+    path.join(os.homedir(), ".z-ai-config"),
+    "/etc/.z-ai-config",
+  ]
+  // If any config file already exists, nothing to do
+  if (configPaths.some((p) => { try { return fs.existsSync(p) } catch { return false } })) return
+
+  // Create from env vars (set on Vercel)
+  const { ZAI_BASE_URL, ZAI_API_KEY, ZAI_CHAT_ID, ZAI_TOKEN, ZAI_USER_ID } = process.env
+  if (!ZAI_CHAT_ID || !ZAI_TOKEN || !ZAI_USER_ID) return
+
+  const config = JSON.stringify({
+    baseUrl: ZAI_BASE_URL || "https://internal-api.z.ai/v1",
+    apiKey: ZAI_API_KEY || "Z.ai",
+    chatId: ZAI_CHAT_ID,
+    token: ZAI_TOKEN,
+    userId: ZAI_USER_ID,
+  })
+  try {
+    fs.writeFileSync(path.join(os.homedir(), ".z-ai-config"), config)
+  } catch {
+    // silent — will fail gracefully
+  }
+}
 
 let _zai: Awaited<ReturnType<typeof ZAI.create>> | null = null
 
 async function getClient() {
-  if (!_zai) _zai = await ZAI.create()
+  if (!_zai) {
+    ensureZaiConfig()
+    _zai = await ZAI.create()
+  }
   return _zai
 }
 
