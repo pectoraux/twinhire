@@ -139,3 +139,36 @@ Stage Summary:
 - TwinHire now has 19 components. The hero combines: editorial copy + living NetworkGraph + AI-generated visual band + network effects flywheel + live activity feed — a premium, alive, comprehensive landing experience.
 - Artifacts added: src/components/twinhire/LiveActivityFeed.tsx; integrated into HeroView.tsx.
 - Lint clean; dev server healthy; live streaming verified via Agent Browser.
+
+---
+Task ID: 8
+Agent: main (Z.ai Code orchestrator) — continuation 7
+Task: Add authentication system, switch to Neon PostgreSQL, push to GitHub, deploy to Vercel with twinhirevercel.app domain.
+
+Work Log:
+- Switched Prisma from SQLite to PostgreSQL (Neon). Added User model (id, email, passwordHash, role, candidateId) and WaitlistEntry model (id, email, name, status). Pushed schema to Neon, generated client.
+- Installed next-auth@4 and bcryptjs. Created NextAuth config (src/lib/auth.ts) with CredentialsProvider, JWT strategy, role/candidateId in token+session. Created /api/auth/[...nextauth] route.
+- Created /api/waitlist (public POST — adds email to waitlist), /api/admin/waitlist (admin GET list + POST approve→create user account with temp password), /api/admin/seed-demo (seeds admin + demo users + twins).
+- Seeded: admin (ekontetevi@gmail / Payswap123456), demo-admin@twinhire.app / demo1234, demo-candidate@twinhire.app / demo1234 (linked to observer-77 candidate), 4 business twins + demo candidate.
+- Built AuthModal.tsx — tabbed login/waitlist modal with quick demo login buttons (Demo Candidate, Demo Admin). Uses next-auth/react signIn with redirect:false.
+- Built AdminPanel.tsx — waitlist management for admins: shows pending/approved/total stats, list of entries with "Approve as candidate" button, shows generated temp password on approval.
+- Integrated auth into page.tsx: useSession hook, gates non-hero views behind auth (opens AuthModal if not authenticated), admin button in nav for admin users, AdminPanel overlay, sign-out in user dropdown.
+- Updated Nav.tsx: shows "Sign in" button when unauthenticated, user dropdown (email + sign out) when authenticated, admin button for admin role.
+- Added Providers.tsx (SessionProvider wrapper) in layout.tsx.
+- Fixed .env: removed quotes (Turbopack issue), removed .env from git tracking.
+- Pushed to GitHub: created repo github.com/pectoraux/twinhire via PAT, pushed all code.
+- Deployed to Vercel: created project (prj_Ujf8DgxNbgiQDwdCkcTkf5TIUM7A), set 4 env vars (DATABASE_URL, DIRECT_URL, NEXTAUTH_SECRET, NEXTAUTH_URL=https://twinhirevercel.app), deployed from main branch. Deployment READY at twinhire.vercel.app.
+- Added custom domain twinhirevercel.app to the Vercel project.
+- Agent Browser verification on PRODUCTION: hero loads (200, no errors), Sign in → AuthModal → Demo Candidate quick login → authenticated (user dropdown shows demo-candidate@twinhire.app), dashboard loads with 4 twins from Neon, no runtime errors.
+
+Stage Summary:
+- Full authentication system live on Vercel: NextAuth credentials provider, waitlist signup, admin approval flow, demo quick-login buttons.
+- Admin: ekontetevi@gmail / Payswap123456
+- Demo admin: demo-admin@twinhire.app / demo1234
+- Demo candidate: demo-candidate@twinhire.app / demo1234
+- Production URL: https://twinhire.vercel.app (custom domain twinhirevercel.app added, pending DNS)
+- GitHub: https://github.com/pectoraux/twinhire
+- Database: Neon PostgreSQL (pooled + direct connections configured)
+- All env vars set on Vercel (DATABASE_URL, DIRECT_URL, NEXTAUTH_SECRET, NEXTAUTH_URL)
+- The app behaves identically on Vercel as on space-z.ai — same LLM-powered simulation/evaluation/recommendation flows, same Neon database, same auth.
+- Lint clean; all flows browser-verified on production.
