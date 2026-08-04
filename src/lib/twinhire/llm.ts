@@ -7,44 +7,73 @@ import fs from "fs"
 import os from "os"
 import path from "path"
 
+interface ZaiConfig {
+  baseUrl: string
+  apiKey: string
+  chatId?: string
+  token?: string
+  userId?: string
+}
+
 /**
- * Ensure the z-ai-web-dev-sdk config file exists.
- * Locally, /etc/.z-ai-config is present. On Vercel/serverless, we create it
- * from environment variables at runtime (writing to os.homedir() which is /tmp).
+ * Load the z-ai-web-dev-sdk config.
+ * Priority:
+ *  1. Config file (local dev: /etc/.z-ai-config)
+ *  2. Environment variables (Vercel/serverless: ZAI_* env vars)
+ *  3. Write env-var config to os.homedir() for the SDK to find
  */
-function ensureZaiConfig() {
+function loadZaiConfig(): ZaiConfig | null {
+  // 1. Check if a config file already exists (local dev)
   const configPaths = [
     path.join(process.cwd(), ".z-ai-config"),
     path.join(os.homedir(), ".z-ai-config"),
     "/etc/.z-ai-config",
   ]
-  // If any config file already exists, nothing to do
-  if (configPaths.some((p) => { try { return fs.existsSync(p) } catch { return false } })) return
+  for (const p of configPaths) {
+    try {
+      if (fs.existsSync(p)) {
+        const cfg = JSON.parse(fs.readFileSync(p, "utf-8"))
+        if (cfg.baseUrl && cfg.apiKey) return cfg
+      }
+    } catch {
+      // continue
+    }
+  }
 
-  // Create from env vars (set on Vercel)
+  // 2. Build config from env vars (Vercel)
   const { ZAI_BASE_URL, ZAI_API_KEY, ZAI_CHAT_ID, ZAI_TOKEN, ZAI_USER_ID } = process.env
-  if (!ZAI_CHAT_ID || !ZAI_TOKEN || !ZAI_USER_ID) return
+  if (!ZAI_CHAT_ID && !ZAI_TOKEN) return null
 
-  const config = JSON.stringify({
+  const config: ZaiConfig = {
     baseUrl: ZAI_BASE_URL || "https://internal-api.z.ai/v1",
     apiKey: ZAI_API_KEY || "Z.ai",
-    chatId: ZAI_CHAT_ID,
-    token: ZAI_TOKEN,
-    userId: ZAI_USER_ID,
-  })
-  try {
-    fs.writeFileSync(path.join(os.homedir(), ".z-ai-config"), config)
-  } catch {
-    // silent — will fail gracefully
   }
+  if (ZAI_CHAT_ID) config.chatId = ZAI_CHAT_ID
+  if (ZAI_TOKEN) config.token = ZAI_TOKEN
+  if (ZAI_USER_ID) config.userId = ZAI_USER_ID
+
+  // 3. Try to write to os.homedir() so the SDK's loadConfig finds it
+  try {
+    fs.writeFileSync(path.join(os.homedir(), ".z-ai-config"), JSON.stringify(config))
+  } catch {
+    // If write fails, we'll construct ZAI directly
+  }
+
+  return config
 }
 
-let _zai: Awaited<ReturnType<typeof ZAI.create>> | null = null
+let _zai: ZAI | null = null
 
 async function getClient() {
   if (!_zai) {
-    ensureZaiConfig()
-    _zai = await ZAI.create()
+    const config = loadZaiConfig()
+    if (config) {
+      // Construct ZAI directly with our config (bypasses file-based loadConfig)
+      _zai = new ZAI(config)
+    } else {
+      // Fall back to the standard create() which reads from config files
+      _zai = await ZAI.create()
+    }
   }
   return _zai
 }
