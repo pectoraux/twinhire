@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CategoryBadge, LiveDot } from "./primitives";
 import { AntiCheatOverlay, AntiCheatBadge } from "./AntiCheatOverlay";
+import { AICopilot } from "./AICopilot";
 import { cn } from "@/lib/utils";
 import type { BusinessTwinView, WorkTask } from "@/lib/twinhire/types";
 import { useEffect, useRef, useState } from "react";
@@ -45,6 +46,7 @@ export function SimulationView({
   onFail?: () => void;
 }) {
   const [draft, setDraft] = useState("");
+  const [copilotOpen, setCopilotOpen] = useState(false);
 
   // ── Anti-cheat state ──────────────────────────────────────────────
   // The simulation environment must stay focused. Leaving the tab or
@@ -358,6 +360,13 @@ export function SimulationView({
           setCheatState("watching")
           onFail?.()
         }}
+      />
+
+      {/* AI Co-pilot */}
+      <AICopilot
+        sessionId={sessionId}
+        open={copilotOpen}
+        onToggle={() => setCopilotOpen((v) => !v)}
       />
     </div>
   );

@@ -29,6 +29,7 @@ import { NetworkBenchmarks } from "./NetworkBenchmarks";
 import { CandidateJourney } from "./CandidateJourney";
 import { ConfidenceIndicator } from "./ConfidenceIndicator";
 import { SimulationDebrief } from "./SimulationDebrief";
+import { EvidenceExport } from "./EvidenceExport";
 import { cn } from "@/lib/utils";
 import type {
   BusinessTwinView,
@@ -432,6 +433,16 @@ export function EvidenceView({
             <Button variant="outline" onClick={() => onNavigate("dashboard")} className="h-11 gap-1.5 rounded-full px-5">
               Back to twin network <ArrowRight className="h-4 w-4" />
             </Button>
+            <EvidenceExport
+              evaluation={evaluation}
+              recommendation={recommendation}
+              candidate={candidate}
+              twin={twin}
+              taskTitle={taskTitle}
+              submission={submission}
+              history={history}
+              sessionAvg={sessionAvg}
+            />
           </div>
         </div>
       </div>
