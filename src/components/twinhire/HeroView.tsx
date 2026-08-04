@@ -18,6 +18,7 @@ import {
 import { CountUp } from "./primitives";
 import { NetworkGraph } from "./NetworkGraph";
 import { NetworkEffectsPanel } from "./NetworkEffectsPanel";
+import { LiveActivityFeed } from "./LiveActivityFeed";
 import { Button } from "@/components/ui/button";
 import type { ViewKey } from "./Nav";
 
@@ -298,15 +299,16 @@ export function HeroView({ onNavigate }: { onNavigate: (v: ViewKey) => void }) {
           ))}
         </div>
 
-        {/* Network effects — the flywheel */}
+        {/* Network effects + live activity — the network is alive */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.7 }}
-          className="mt-12"
+          className="mt-12 grid gap-4 lg:grid-cols-2"
         >
           <NetworkEffectsPanel />
+          <LiveActivityFeed />
         </motion.div>
 
         <motion.div

@@ -122,3 +122,20 @@ Stage Summary:
 - TwinHire now has 18 components covering every layer and principle of the vision, including the network-effect flywheel that ties the whole "intelligence network" concept together.
 - Artifacts added: public/twinhire-hero.png (generated), src/components/twinhire/NetworkEffectsPanel.tsx; integrated into HeroView.tsx.
 - Lint clean; dev server healthy; all new content browser-verified.
+
+---
+Task ID: 7
+Agent: main (Z.ai Code orchestrator) — continuation 6
+Task: Make the network feel alive with a real-time activity feed.
+
+Work Log:
+- Built LiveActivityFeed.tsx: a real-time ticker of network activity that streams new events every ~5 seconds. Event types include: session_started ("A candidate entered TWIN-X to perform operational work"), evaluation_completed, twin_learned ("TWIN-X updated its capability ranking from a new outcome"), candidate_joined, gap_surfaced, hiring_decision. Each event has a colored icon, twin code, and time-ago label that ages. New events animate in at the top with a "new" badge; the latest event is highlighted. Includes a "live" indicator and an "Events in last hour" counter that updates.
+- Fixed a react-hooks/set-state-in-effect lint error by using queueMicrotask to defer the initial seeding (avoids hydration mismatch while satisfying the linter).
+- Integrated into HeroView alongside the NetworkEffectsPanel in a two-column "the network is alive" layout.
+- Agent Browser verification: Live Activity Feed renders with seeded events; after 6 seconds, new events stream in at the top ("TWIN-482 updated its capability ranking from a new outcome" — just now) with older events aging down; no runtime errors; no hydration mismatch.
+
+Stage Summary:
+- The network now feels alive — a real-time activity ticker streams events (sessions, evaluations, twin learning, candidates joining, gaps surfacing, hiring decisions) every few seconds, reinforcing that this is a living intelligence network, not a static demo.
+- TwinHire now has 19 components. The hero combines: editorial copy + living NetworkGraph + AI-generated visual band + network effects flywheel + live activity feed — a premium, alive, comprehensive landing experience.
+- Artifacts added: src/components/twinhire/LiveActivityFeed.tsx; integrated into HeroView.tsx.
+- Lint clean; dev server healthy; live streaming verified via Agent Browser.
