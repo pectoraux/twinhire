@@ -13,6 +13,7 @@ import { EvidenceView } from "@/components/twinhire/EvidenceView";
 import { AuthModal } from "@/components/twinhire/AuthModal";
 import { AdminPanel } from "@/components/twinhire/AdminPanel";
 import { ApiKeySettings } from "@/components/twinhire/ApiKeySettings";
+import { TwinComparison } from "@/components/twinhire/TwinComparison";
 import type { HistorySession } from "@/components/twinhire/EvidenceTimeline";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,7 @@ export default function Home() {
   const [authOpen, setAuthOpen] = useState(false);
   const [adminMode, setAdminMode] = useState(false);
   const [settingsMode, setSettingsMode] = useState(false);
+  const [compareMode, setCompareMode] = useState(false);
   const [view, setView] = useState<ViewKey>("hero");
   const [twins, setTwins] = useState<BusinessTwinView[]>([]);
   const [candidate, setCandidate] = useState<CandidateView | null>(null);
@@ -258,6 +260,8 @@ export default function Home() {
               {view === "dashboard" &&
                 (loadingNetwork ? (
                   <DashboardSkeleton />
+                ) : compareMode ? (
+                  <TwinComparison twins={twins} onClose={() => setCompareMode(false)} />
                 ) : (
                   <TwinDashboardView
                     twins={twins}
@@ -265,6 +269,7 @@ export default function Home() {
                     onSelect={handleSelectTwin}
                     onStartSimulation={handleStartSimulation}
                     pendingGapKey={generating ? activeGapKey : null}
+                    onCompare={() => setCompareMode(true)}
                   />
                 ))}
 

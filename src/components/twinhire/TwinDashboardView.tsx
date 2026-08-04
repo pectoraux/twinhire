@@ -10,6 +10,7 @@ import {
   Cpu,
   Flag,
   Gauge,
+  GitCompare,
   Layers3,
   ListChecks,
   MapPin,
@@ -31,12 +32,14 @@ export function TwinDashboardView({
   onSelect,
   onStartSimulation,
   pendingGapKey,
+  onCompare,
 }: {
   twins: BusinessTwinView[];
   selectedId: string | null;
   onSelect: (id: string) => void;
   onStartSimulation: (capabilityKey: string) => void;
   pendingGapKey?: string | null;
+  onCompare?: () => void;
 }) {
   const twin = twins.find((t) => t.id === selectedId) ?? twins[0];
   const ranked = [...(twin?.capabilities ?? [])].sort((a, b) => b.expectedRoi - a.expectedRoi);
@@ -46,9 +49,16 @@ export function TwinDashboardView({
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         {/* Heading */}
         <div className="flex flex-col gap-2">
-          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-            01 · Twin Network
-          </span>
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+              01 · Twin Network
+            </span>
+            {onCompare && (
+              <Button variant="outline" size="sm" onClick={onCompare} className="h-8 gap-1.5 rounded-full">
+                <GitCompare className="h-3.5 w-3.5" /> Compare twins
+              </Button>
+            )}
+          </div>
           <h1 className="font-display text-3xl text-balance sm:text-4xl">
             Anonymized business twins, ranked by capability gaps
           </h1>

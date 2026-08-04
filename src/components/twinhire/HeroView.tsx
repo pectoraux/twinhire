@@ -21,6 +21,7 @@ import { NetworkGraph } from "./NetworkGraph";
 import { NetworkEffectsPanel } from "./NetworkEffectsPanel";
 import { LiveActivityFeed } from "./LiveActivityFeed";
 import { RoleSwitcher, type Role } from "./RoleSwitcher";
+import { SkillExplorer } from "./SkillExplorer";
 import { Button } from "@/components/ui/button";
 import type { ViewKey } from "./Nav";
 
@@ -324,6 +325,17 @@ export function HeroView({ onNavigate }: { onNavigate: (v: ViewKey) => void }) {
         >
           <NetworkEffectsPanel />
           <LiveActivityFeed />
+        </motion.div>
+
+        {/* Skill benchmark explorer */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.7 }}
+          className="mt-8"
+        >
+          <SkillExplorer />
         </motion.div>
 
         <motion.div
