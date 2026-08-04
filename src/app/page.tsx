@@ -231,7 +231,7 @@ export default function Home() {
 
       <main className="flex-1">
         {adminMode && isAdmin ? (
-          <AdminPanel onClose={() => setAdminMode(false)} />
+          <AdminPanel onClose={() => setAdminMode(false)} twins={twins} />
         ) : (
           <AnimatePresence mode="wait">
             <motion.div
@@ -266,6 +266,14 @@ export default function Home() {
                   generating={generating}
                   evaluating={evaluating}
                   onSubmit={handleSubmit}
+                  onFail={() => {
+                    toast({
+                      variant: "destructive",
+                      title: "Session failed",
+                      description: "You left the simulation environment. The session has been marked as failed.",
+                    });
+                    handleAnotherChallenge();
+                  }}
                 />
               )}
 

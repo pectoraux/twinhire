@@ -39,6 +39,30 @@ model WaitlistEntry {
   updatedAt DateTime @updatedAt
 }
 
+/// Real use cases submitted by businesses, anonymized by the AI before use.
+/// Businesses can opt in to being identified (identifyOptIn = true).
+model UseCaseSubmission {
+  id             String   @id @default(cuid())
+  /// The twin this use case enriches
+  twinId         String
+  /// The raw use case as submitted by the business (never shown to candidates)
+  rawUseCase     String
+  /// The AI-anonymized version (shown to candidates, used in simulations)
+  anonymizedUseCase String?
+  /// Category of the use case
+  category       String   @default("Operations")
+  /// If true, the business consents to being identified — anonymization is lighter
+  identifyOptIn  Boolean  @default(false)
+  /// pending | anonymized | rejected
+  status         String   @default("pending")
+  /// What was anonymized (summary, e.g. "company name, customer names, revenue figures")
+  anonymizationNotes String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  twin           BusinessTwin @relation(fields: [twinId], references: [id], onDelete: Cascade)
+}
+
 // ── Twin models ──────────────────────────────────────────────────────
 
 /// A continuously evolving AI Digital Twin of a real business (anonymized).
@@ -63,6 +87,7 @@ model BusinessTwin {
   updatedAt     DateTime @updatedAt
 
   sessions      WorkSession[]
+  useCases      UseCaseSubmission[]
 }
 
 /// A candidate represented as a continuously evolving capability graph (not a resume).

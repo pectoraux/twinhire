@@ -12,15 +12,17 @@ import {
   Loader2,
   Lock,
   Send,
+  ShieldAlert,
   Sparkles,
   Wrench,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CategoryBadge, LiveDot } from "./primitives";
+import { AntiCheatOverlay, AntiCheatBadge } from "./AntiCheatOverlay";
 import { cn } from "@/lib/utils";
 import type { BusinessTwinView, WorkTask } from "@/lib/twinhire/types";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export function SimulationView({
   twin,
@@ -40,8 +42,92 @@ export function SimulationView({
   generating: boolean;
   evaluating: boolean;
   onSubmit: (submission: string) => void;
+  onFail?: () => void;
 }) {
   const [draft, setDraft] = useState("");
+
+  // ── Anti-cheat state ──────────────────────────────────────────────
+  // The simulation environment must stay focused. Leaving the tab or
+  // losing window focus triggers a warning countdown, then failure.
+  const [cheatState, setCheatState] = useState<"watching" | "warning" | "failed">("watching");
+  const [countdown, setCountdown] = useState(10);
+  const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Detect window blur / tab switch / visibility change
+  useEffect(() => {
+    if (!task || evaluating) return; // only active when task is loaded and not evaluating
+
+    const onBlur = () => {
+      if (cheatState === "failed") return;
+      setCheatState("warning");
+      setCountdown(10)
+    }
+
+    const onVisibility = () => {
+      if (document.hidden && cheatState !== "failed") {
+        setCheatState("warning")
+        setCountdown(10)
+      }
+    }
+
+    window.addEventListener("blur", onBlur)
+    document.addEventListener("visibilitychange", onVisibility)
+    return () => {
+      window.removeEventListener("blur", onBlur)
+      document.removeEventListener("visibilitychange", onVisibility)
+    }
+  }, [task, evaluating, cheatState])
+
+  // Countdown timer when in warning state
+  useEffect(() => {
+    if (cheatState !== "warning") {
+      if (countdownRef.current) {
+        clearInterval(countdownRef.current)
+        countdownRef.current = null
+      }
+      return
+    }
+    countdownRef.current = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          setCheatState("failed")
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+    return () => {
+      if (countdownRef.current) clearInterval(countdownRef.current)
+    }
+  }, [cheatState])
+
+  // When window regains focus during warning, resume
+  useEffect(() => {
+    const onFocus = () => {
+      if (cheatState === "warning") {
+        setCheatState("watching")
+        setCountdown(10)
+      }
+    }
+    window.addEventListener("focus", onFocus)
+    return () => window.removeEventListener("focus", onFocus)
+  }, [cheatState])
+
+  // ── Copy/paste/cut prevention ─────────────────────────────────────
+  const preventClipboard = (e: React.ClipboardEvent) => {
+    e.preventDefault()
+    return false
+  }
+
+  // Prevent keyboard shortcuts for copy/paste/cut (Ctrl+C, Ctrl+V, Ctrl+X)
+  const preventClipboardShortcuts = (e: React.KeyboardEvent) => {
+    if ((e.ctrlKey || e.metaKey) && ["c", "v", "x", "a"].includes(e.key.toLowerCase())) {
+      // Allow Ctrl+A only within the textarea (for selection), but prevent copy after
+      if (e.key.toLowerCase() === "a") return
+      e.preventDefault()
+      return false
+    }
+  }
 
   if (generating || (!task && !sessionId)) {
     return <GeneratingSkeleton />;
@@ -68,8 +154,11 @@ export function SimulationView({
             <span>{twin.industry}</span>
             <span>·</span>
             <CategoryBadge category={gapCategory} />
-            <span className="ml-auto flex items-center gap-1.5">
-              <LiveDot className="h-1.5 w-1.5" /> Simulation live
+            <span className="ml-auto flex items-center gap-2">
+              <AntiCheatBadge active={!evaluating} />
+              <span className="flex items-center gap-1.5">
+                <LiveDot className="h-1.5 w-1.5" /> Simulation live
+              </span>
             </span>
           </div>
           <h1 className="font-display text-3xl text-balance sm:text-4xl">{task.taskTitle}</h1>
@@ -169,6 +258,11 @@ export function SimulationView({
               <textarea
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
+                onCopy={preventClipboard}
+                onPaste={preventClipboard}
+                onCut={preventClipboard}
+                onKeyDown={preventClipboardShortcuts}
+                onContextMenu={(e) => e.preventDefault()}
                 placeholder={`# Approach\n\nStart by framing the real problem and the constraints that matter most...\n\n## Plan\n1. ...\n2. ...\n\n## Recommendation\n...`}
                 className="mt-4 h-[420px] w-full resize-none rounded-xl border border-border/60 bg-background p-4 font-mono text-sm leading-relaxed text-foreground shadow-inner outline-none transition-colors placeholder:text-muted-foreground/60 focus:border-primary/50 focus:ring-2 focus:ring-primary/15 scroll-slim"
                 spellCheck={false}
@@ -178,6 +272,9 @@ export function SimulationView({
                 <div className="flex items-center gap-3 text-xs text-muted-foreground">
                   <span className="tabular-nums">{wordCount} words</span>
                   <span className="hidden sm:inline">·</span>
+                  <span className="hidden items-center gap-1.5 sm:inline-flex">
+                    <ShieldAlert className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" /> Copy/paste disabled · stay on this tab
+                  </span>
                   <span className="hidden items-center gap-1.5 sm:inline-flex">
                     <Bot className="h-3.5 w-3.5" /> AI leverage is assessed, not penalized — show your judgment.
                   </span>
@@ -248,6 +345,20 @@ export function SimulationView({
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Anti-cheat overlay */}
+      <AntiCheatOverlay
+        state={cheatState}
+        countdown={countdown}
+        onDismiss={() => {
+          setCheatState("watching")
+          setCountdown(10)
+        }}
+        onFail={() => {
+          setCheatState("watching")
+          onFail?.()
+        }}
+      />
     </div>
   );
 }

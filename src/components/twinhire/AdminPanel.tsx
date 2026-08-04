@@ -8,13 +8,16 @@ import {
   Loader2,
   Mail,
   Shield,
+  ShieldCheck,
   UserCheck,
   UserPlus,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { UseCaseIngestionPanel } from "./UseCaseIngestionPanel";
 import { cn } from "@/lib/utils";
+import type { BusinessTwinView } from "@/lib/twinhire/types";
 
 interface WaitlistEntry {
   id: string;
@@ -30,7 +33,8 @@ interface ApprovedUser {
   role: string;
 }
 
-export function AdminPanel({ onClose }: { onClose: () => void }) {
+export function AdminPanel({ onClose, twins }: { onClose: () => void; twins: BusinessTwinView[] }) {
+  const [tab, setTab] = useState<"waitlist" | "usecases">("waitlist");
   const [entries, setEntries] = useState<WaitlistEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [approving, setApproving] = useState<string | null>(null);
@@ -86,9 +90,13 @@ export function AdminPanel({ onClose }: { onClose: () => void }) {
             <span className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-3 py-1 text-xs font-medium text-background">
               <Shield className="h-3 w-3" /> Admin
             </span>
-            <h1 className="mt-3 font-display text-3xl">Waitlist management</h1>
+            <h1 className="mt-3 font-display text-3xl">
+              {tab === "waitlist" ? "Waitlist management" : "Business use cases"}
+            </h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Approve waitlisted users to create their accounts. Temporary passwords are shown once.
+              {tab === "waitlist"
+                ? "Approve waitlisted users to create their accounts. Temporary passwords are shown once."
+                : "Feed real use cases. The AI anonymizes them so candidates can't identify the business."}
             </p>
           </div>
           <Button variant="outline" onClick={onClose} className="h-10 gap-1.5 rounded-full">
@@ -96,7 +104,33 @@ export function AdminPanel({ onClose }: { onClose: () => void }) {
           </Button>
         </div>
 
-        {/* Stats */}
+        {/* Tabs */}
+        <div className="mt-6 flex gap-1 rounded-full bg-secondary/60 p-1">
+          <button
+            onClick={() => setTab("waitlist")}
+            className={cn(
+              "flex flex-1 items-center justify-center gap-1.5 rounded-full py-2 text-xs font-medium transition-colors",
+              tab === "waitlist" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground",
+            )}
+          >
+            <UserCheck className="h-3.5 w-3.5" /> Waitlist
+          </button>
+          <button
+            onClick={() => setTab("usecases")}
+            className={cn(
+              "flex flex-1 items-center justify-center gap-1.5 rounded-full py-2 text-xs font-medium transition-colors",
+              tab === "usecases" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground",
+            )}
+          >
+            <ShieldCheck className="h-3.5 w-3.5" /> Use cases
+          </button>
+        </div>
+
+        {tab === "usecases" ? (
+          <UseCaseIngestionPanel twins={twins} onClose={onClose} />
+        ) : (
+          <>
+            {/* Stats */}
         <div className="mt-6 grid grid-cols-3 gap-px overflow-hidden rounded-2xl border border-border/60 bg-border/60">
           <Stat label="Pending" value={pending.length} icon={Clock} tone="amber" />
           <Stat label="Approved" value={approvedCount} icon={CheckCircle2} tone="emerald" />
@@ -177,6 +211,8 @@ export function AdminPanel({ onClose }: { onClose: () => void }) {
             </div>
           )}
         </div>
+          </>
+        )}
       </div>
     </div>
   );
