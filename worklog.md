@@ -240,3 +240,34 @@ Stage Summary:
 - TwinHire now has 24 components covering every layer and principle of the vision.
 - Artifacts added: src/components/twinhire/{CandidateJourney,NetworkBenchmarks}.tsx; integrated into EvidenceView.tsx.
 - Lint clean; all flows browser-verified; pushed to GitHub (auto-deploys to Vercel).
+
+---
+Task ID: 12
+Agent: main (Z.ai Code orchestrator) — continuation 11
+Task: Business use case ingestion with AI anonymization + anti-cheat features in simulation.
+
+Work Log:
+- Added UseCaseSubmission model to Prisma (twinId, rawUseCase, anonymizedUseCase, category, identifyOptIn, status, anonymizationNotes). Pushed to Neon.
+- Created /api/twinhire/use-case endpoint: GET (list) + POST (submit + LLM anonymize). The LLM strips company names, customer names, exact revenue, personal identifiers — unless identifyOptIn is true (lighter anonymization). Returns the anonymized version + notes on what was removed.
+- Built UseCaseIngestionPanel.tsx: admin UI with 3-step flow diagram (Business submits → AI anonymizes → Candidate works), twin selector, category selector, masked raw textarea (show/hide toggle), identification opt-in checkbox, submit button with LLM loading state, anonymized result preview with notes, and list of existing submissions.
+- Integrated into AdminPanel with a tabbed UI (Waitlist | Use cases).
+- Built AntiCheatOverlay.tsx: full-screen overlay shown when the simulation loses focus. Shows a 10-second countdown warning first ("Focus lost — return to the tab now"), then a failure screen ("Session failed — you left the simulation environment") with explanation of why evidence integrity matters.
+- Added anti-cheat to SimulationView:
+  - Copy/paste/cut disabled on the textarea (onCopy, onPaste, onCut handlers + keyboard shortcut prevention for Ctrl+C/V/X)
+  - Right-click context menu disabled
+  - Window blur detection → triggers warning overlay
+  - Visibility change detection (tab switch) → triggers warning overlay
+  - 10-second countdown → auto-fail if focus not restored
+  - "Anti-cheat active" badge with pulsing indicator in the header
+  - "Copy/paste disabled · stay on this tab" note near the word count
+- Agent Browser verification: 
+  - Use case ingestion: submitted a real use case with company name "CloudSync Tech", $2.4M ARR, person name "Sarah Chen" → AI anonymized to "your D2C Consumer Goods company", "significant ARR", "Your VP of Sales", preserving all operational details. Notes: "Anonymized: company name, 3 customer names, exact revenue figure, product name, location details, employee count, funding stage".
+  - Anti-cheat: badge shows "Anti-cheat active", copy/paste/context-menu all programmatically confirmed as prevented, focus-loss overlay triggers with countdown and restores on focus return.
+
+Stage Summary:
+- Two major features added:
+  1. Business use case ingestion with AI anonymization — businesses can feed real scenarios, the AI anonymizes them (with opt-in for lighter anonymization), making simulations richer while protecting business identity.
+  2. Anti-cheat in simulation — copy/paste/cut disabled, focus-loss detection with countdown → failure, context menu disabled. Preserves evidence integrity.
+- TwinHire now has 26 components. The admin panel has two tabs (Waitlist + Use cases). The simulation environment is now integrity-protected.
+- Artifacts: prisma/schema.prisma (UseCaseSubmission), src/app/api/twinhire/use-case/route.ts, src/components/twinhire/{UseCaseIngestionPanel,AntiCheatOverlay}.tsx, updated AdminPanel/SimulationView/page.tsx.
+- Lint clean; all features browser-verified; pushed to GitHub.
