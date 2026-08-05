@@ -27,6 +27,9 @@ import { OrganizationalMemory } from "./OrganizationalMemory";
 import { CapabilityMarketplace } from "./CapabilityMarketplace";
 import { CapabilityEconomy } from "./CapabilityEconomy";
 import { CapabilityGenomeViewer } from "./CapabilityGenomeViewer";
+import { GlobalCapabilityExchange } from "./GlobalCapabilityExchange";
+import { CapabilityRoadmapAndForecast } from "./CapabilityRoadmapAndForecast";
+import { WorkforceDesigner } from "./WorkforceDesigner";
 import { Button } from "@/components/ui/button";
 import type { ViewKey } from "./Nav";
 
@@ -385,6 +388,39 @@ export function HeroView({ onNavigate }: { onNavigate: (v: ViewKey) => void }) {
           className="mt-8"
         >
           <CapabilityGenomeViewer />
+        </motion.div>
+
+        {/* Global Capability Exchange */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.7 }}
+          className="mt-12"
+        >
+          <GlobalCapabilityExchange />
+        </motion.div>
+
+        {/* Professional Roadmap + Business Forecasting */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.7 }}
+          className="mt-8"
+        >
+          <CapabilityRoadmapAndForecast />
+        </motion.div>
+
+        {/* Workforce Designer */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.7 }}
+          className="mt-8"
+        >
+          <WorkforceDesigner />
         </motion.div>
 
         <motion.div
