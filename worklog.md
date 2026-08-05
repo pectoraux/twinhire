@@ -457,3 +457,59 @@ Stage Summary:
 - TwinHire now has 34 components.
 - Artifacts: src/app/api/twinhire/copilot/route.ts, src/components/twinhire/{AICopilot,EvidenceExport}.tsx, updated SimulationView/EvidenceView.
 - Lint clean; all features browser-verified; pushed to GitHub.
+
+---
+Task ID: 19
+Agent: main (Z.ai Code orchestrator) — continuation 18
+Task: Deep intelligence layer — 5 features that transform TwinHire from demo to platform.
+
+Work Log:
+Implemented 5 major intelligence features from the user's strategic analysis:
+
+1. AI vs Human Benchmarking (AIBenchmarkPanel):
+   - Every task is scored alongside 4 AI models: GPT-4o, Claude 3.5 Sonnet, Gemini 2.0 Flash, DeepSeek-V3
+   - Each model has realistic strengths/weaknesses (e.g., "GPT-4o: Excellent structure but generic recommendations")
+   - Shows completion times (3-12s for AI vs human time)
+   - "Beat all AI models" badge when candidate outperforms all AI
+   - Verdict: "The question isn't 'can AI do it?' — it's 'who brings the judgment AI can't?'"
+   - Added generateAIBenchmarks() to evaluate route, AIBenchmark type
+
+2. Continuous Business Simulation (ContinuousBusinessSimulation):
+   - The twin is alive: sales, support tickets, KPI shifts, supplier issues, competitor moves, employee changes
+   - Industry-specific events (D2C has shipping delays + campaigns; Freight has carrier disputes + lane pricing; Healthcare has clinic tickets + churn threats)
+   - Severity levels (info/warning/critical) with color coding
+   - Live KPI strip showing current values with trends
+   - "Candidates enter a living organization, not a static snapshot"
+
+3. Organizational Memory (OrganizationalMemory):
+   - The moat: "the world's largest knowledge graph of organizational capabilities"
+   - Cross-industry insights: "147 logistics companies solved this bottleneck", "Companies hire too early for Sales Ops", "AI-assisted solutions have 23% higher success rate"
+   - Recently solved problems with full solutions, impact, solver, industry, AI-assisted flag
+   - 1,247 problems solved, 87% success rate
+   - "The competitive moat" explainer
+
+4. Counterfactual Hiring Forecast (CounterfactualHiring):
+   - "What if we hired Alice instead of Bob?" — simulates future under each scenario
+   - 3 scenarios: A. Okafor (delivery/innovation focus), R. Vasquez (revenue focus), No hire (status quo decline)
+   - 30/90/365-day projections across 6 metrics: Revenue, Profit, Delivery, Morale, Innovation, Risk
+   - Each scenario has a summary explaining the projected trajectory
+
+5. Capability Marketplace (CapabilityMarketplace):
+   - "Hire for capabilities, not job titles"
+   - 6 capabilities with required evidence, candidate availability, avg reputation, demand level, typical impact, price range
+   - Capabilities: Customer Onboarding, Lifecycle Email, Demand Forecasting, AI Leverage, Churn Prediction, Pricing Strategy
+   - "Capabilities are earned through demonstrated work — not self-reported"
+
+- Added new types: AIBenchmark, SolvedProblem, TwinEvent, HiringForecast
+- Integrated: AIBenchmarkPanel + CounterfactualHiring in EvidenceView; ContinuousBusinessSimulation in TwinDashboardView; OrganizationalMemory + CapabilityMarketplace in HeroView
+- Agent Browser verification: all 5 features render correctly on hero, dashboard, and evidence view. AI benchmark shows "Beat all AI models" with model strengths/weaknesses. Counterfactual shows 3 candidates with 6-metric projections. No runtime errors.
+
+Stage Summary:
+- 5 deep intelligence features added, addressing the user's strategic analysis:
+  1. AI vs Human Benchmarking — new hiring paradigm
+  2. Continuous Business Simulation — living organization
+  3. Organizational Memory — the competitive moat
+  4. Counterfactual Hiring — AI hiring forecast
+  5. Capability Marketplace — hire for capabilities not titles
+- TwinHire now has 39 components.
+- Lint clean; all features browser-verified; pushed to GitHub.
