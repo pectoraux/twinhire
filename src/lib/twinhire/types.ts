@@ -254,3 +254,97 @@ export const METRIC_LABELS: Record<string, string> = {
   improvement_over_time: "Improvement Over Time",
   autonomy: "Autonomy",
 }
+
+// ── Capability Economy types ─────────────────────────────────────────
+
+/// The Capability Genome — a structured definition of every capability.
+/// This is the core intellectual property of the platform.
+export interface CapabilityGenome {
+  id: string
+  name: string
+  category: string
+  /// What this capability contributes to (e.g. "Revenue Growth", "Manufacturing")
+  contributesTo: string[]
+  /// Which KPIs this capability improves
+  improvesKpis: string[]
+  /// Industries where this capability matters
+  industries: string[]
+  /// Prerequisite capabilities (must have before learning this)
+  prerequisites: string[]
+  /// Complementary capabilities (work well together)
+  complementary: string[]
+  /// Average salary premium for having this capability
+  salaryPremium: string
+  /// Demand trend (% growth year over year)
+  demandTrend: number
+  /// Risk of automation (0-100, higher = more likely to be automated)
+  automationRisk: number
+  /// AI augmentation opportunities (how AI can amplify this capability)
+  aiAugmentation: string
+  /// Projected ROI for a business adding this capability
+  projectedRoi: string
+  /// Knowledge areas required
+  knowledge: string[]
+  /// Skills required
+  skills: string[]
+  /// Behaviors expected
+  behaviors: string[]
+  /// Tools commonly used
+  tools: string[]
+  /// Evidence requirements (how to prove this capability)
+  evidenceRequirements: string[]
+  /// Learning paths to acquire this capability
+  learningPaths: string[]
+}
+
+/// A capability discovered by the AI from business questions.
+export interface DiscoveredCapability {
+  name: string
+  category: string
+  projectedRevenueImpact: string
+  projectedEbitdaImpact?: string
+  costReduction?: string
+  confidence: number
+  urgency: "Critical" | "High" | "Medium" | "Low"
+  timeToValue: string
+  hiringDifficulty: number // 1-5
+  aiReplaceLikelihood: number // 0-100
+  aiAugmentLikelihood: number // 0-100
+  recommendedOrder: number
+}
+
+/// Market intelligence for a capability.
+export interface CapabilityMarketData {
+  name: string
+  category: string
+  demandGrowth: number // % YoY
+  medianSalary: string
+  automationRisk: number // 0-100
+  aiAugmentation: number // 0-100
+  companiesInterested: number
+  industries: string[]
+}
+
+/// Capability investment projection — "if I learn X, what happens?"
+export interface CapabilityInvestment {
+  capability: string
+  currentSalary: string
+  projectedSalary: string
+  salaryDelta: string
+  probability: number // % likelihood of achieving this
+  timeRequired: string
+  demandLevel: "Very High" | "High" | "Medium" | "Low"
+  newOpportunities: number // % increase in opportunities
+  hiringProbability: number // % increase
+}
+
+/// A capability in a candidate's wallet — evidence-backed, portable.
+export interface CapabilityWalletEntry {
+  capability: string
+  score: number // 0-100, evidence-backed
+  evidenceCount: number
+  simulations: number
+  lastDemonstrated: string
+  portable: boolean // can be shown to other businesses
+  certificationEligible: boolean
+}

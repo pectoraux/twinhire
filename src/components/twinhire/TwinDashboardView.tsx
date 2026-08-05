@@ -22,6 +22,7 @@ import { TwinKnowledgeGraph } from "./TwinKnowledgeGraph";
 import { DataSourcesPanel } from "./DataSourcesPanel";
 import { ContinuousBusinessSimulation } from "./ContinuousBusinessSimulation";
 import { TwinEvolution } from "./TwinEvolution";
+import { CapabilityDiscovery } from "./CapabilityDiscovery";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -278,6 +279,11 @@ export function TwinDashboardView({
         {/* Twin evolution — how the twin has changed */}
         <div className="mt-10">
           <TwinEvolution twin={twin} />
+        </div>
+
+        {/* Capability discovery — don't write job descriptions */}
+        <div className="mt-10">
+          <CapabilityDiscovery twin={twin} />
         </div>
       </div>
     </div>
