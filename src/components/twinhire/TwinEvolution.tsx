@@ -1,12 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useCallback, useEffect, useState } from "react";
 import {
   ArrowRight,
   Building2,
   Calendar,
   Cpu,
   GitBranch,
+  Loader2,
   Target,
   TrendingUp,
   Users,
@@ -92,7 +94,36 @@ export function TwinEvolution({
   twin: BusinessTwinView;
   className?: string;
 }) {
-  const events = generateEvolution(twin)
+  const [liveEvents, setLiveEvents] = useState<EvolutionEvent[] | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [isLive, setIsLive] = useState(false)
+
+  const fetchEvolution = useCallback(async () => {
+    setLoading(true)
+    try {
+      const res = await fetch("/api/twinhire/twin-evolution", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ twinId: twin.id }),
+      })
+      if (!res.ok) throw new Error("failed")
+      const data = await res.json()
+      if (data.events?.length > 0) {
+        setLiveEvents(data.events)
+        setIsLive(true)
+      }
+    } catch {
+      // silent — keep static fallback
+    } finally {
+      setLoading(false)
+    }
+  }, [twin.id])
+
+  useEffect(() => {
+    void fetchEvolution()
+  }, [fetchEvolution])
+
+  const events = isLive && liveEvents ? liveEvents : generateEvolution(twin)
 
   return (
     <div className={cn("rounded-2xl border border-border/60 bg-card p-6", className)}>
@@ -100,6 +131,12 @@ export function TwinEvolution({
         <div>
           <h3 className="flex items-center gap-2 text-sm font-semibold">
             <GitBranch className="h-4 w-4 text-primary" /> Twin evolution
+            {loading && <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />}
+            {isLive && !loading && (
+              <span className="rounded-full bg-emerald-100 px-1.5 py-0.5 text-[8px] font-medium text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">
+                AI-generated
+              </span>
+            )}
           </h3>
           <p className="mt-1 text-xs text-muted-foreground">
             The twin changes every week. New goals, customers, competitors, regulations, priorities.

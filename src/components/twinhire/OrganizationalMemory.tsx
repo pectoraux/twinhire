@@ -1,11 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useCallback, useEffect, useState } from "react";
 import {
   BrainCircuit,
   CheckCircle2,
   Database,
   Lightbulb,
+  Loader2,
   Network,
   TrendingUp,
 } from "lucide-react";
@@ -118,8 +120,47 @@ const CROSS_INDUSTRY_INSIGHTS = [
 ]
 
 export function OrganizationalMemory({ className }: { className?: string }) {
-  const totalProblems = 1247 // simulated count
-  const successRate = 87
+  const [liveInsights, setLiveInsights] = useState<typeof CROSS_INDUSTRY_INSIGHTS | null>(null)
+  const [liveStats, setLiveStats] = useState<{ solvedCount: number; successRate: number; moatStatement: string } | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [isLive, setIsLive] = useState(false)
+
+  const fetchInsights = useCallback(async () => {
+    setLoading(true)
+    try {
+      const res = await fetch("/api/twinhire/org-memory", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      })
+      if (!res.ok) throw new Error("failed")
+      const data = await res.json()
+      if (data.insights?.length > 0) {
+        setLiveInsights(data.insights.map((i: { text: string; category: string; confidence: number }) => ({
+          text: i.text,
+          category: i.category,
+        })))
+        setLiveStats({
+          solvedCount: data.solvedCount ?? 1247,
+          successRate: data.successRate ?? 87,
+          moatStatement: data.moatStatement ?? "",
+        })
+        setIsLive(true)
+      }
+    } catch {
+      // silent — keep static fallback
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    void fetchInsights()
+  }, [fetchInsights])
+
+  const insights = isLive && liveInsights ? liveInsights : CROSS_INDUSTRY_INSIGHTS
+  const totalProblems = liveStats?.solvedCount ?? 1247
+  const successRate = liveStats?.successRate ?? 87
 
   return (
     <div className={cn("rounded-2xl border border-border/60 bg-card p-6", className)}>
@@ -151,9 +192,15 @@ export function OrganizationalMemory({ className }: { className?: string }) {
       <div className="mt-5">
         <div className="flex items-center gap-2 text-[10px] font-medium uppercase tracking-wider text-primary">
           <Network className="h-3 w-3" /> Cross-industry intelligence
+          {loading && <Loader2 className="ml-1 h-2.5 w-2.5 animate-spin" />}
+          {isLive && !loading && (
+            <span className="ml-1 rounded-full bg-emerald-100 px-1.5 py-0.5 text-[8px] font-medium text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">
+              AI-generated
+            </span>
+          )}
         </div>
         <div className="mt-2 space-y-2">
-          {CROSS_INDUSTRY_INSIGHTS.map((insight, i) => (
+          {insights.map((insight, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, x: -6 }}
