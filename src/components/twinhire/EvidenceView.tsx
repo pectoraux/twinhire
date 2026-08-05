@@ -241,6 +241,7 @@ export function EvidenceView({
             <AIBenchmarkPanel
               candidateScore={avg}
               benchmarks={evaluation.aiBenchmarks}
+              sessionId={history.length > 0 ? history[history.length - 1].sessionId : undefined}
             />
           </div>
         )}
@@ -437,7 +438,7 @@ export function EvidenceView({
 
         {/* Counterfactual hiring forecast */}
         <div className="mt-8">
-          <CounterfactualHiring />
+          <CounterfactualHiring sessionId={history.length > 0 ? history[history.length - 1].sessionId : undefined} />
         </div>
 
         {/* Multi-agent employees */}

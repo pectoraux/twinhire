@@ -1,11 +1,14 @@
 "use client";
 
+import { useState, useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
   BarChart3,
   BrainCircuit,
   Clock,
+  Loader2,
+  RefreshCw,
   TrendingDown,
   TrendingUp,
   Users,
@@ -77,27 +80,75 @@ const METRIC_META: { key: string; label: string; positive: boolean }[] = [
   { key: "risk", label: "Risk", positive: false },
 ]
 
-export function CounterfactualHiring({ className }: { className?: string }) {
+export function CounterfactualHiring({ className, sessionId }: { className?: string; sessionId?: string }) {
+  const [liveScenarios, setLiveScenarios] = useState<typeof FORECASTS | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [isLive, setIsLive] = useState(false)
+
+  const fetchScenarios = useCallback(async () => {
+    if (!sessionId) return
+    setLoading(true)
+    try {
+      const res = await fetch("/api/twinhire/counterfactual", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId }),
+      })
+      if (!res.ok) throw new Error("failed")
+      const data = await res.json()
+      if (data.scenarios?.length > 0) {
+        setLiveScenarios(data.scenarios)
+        setIsLive(true)
+      }
+    } catch {
+      // silent — keep static fallback
+    } finally {
+      setLoading(false)
+    }
+  }, [sessionId])
+
+  const scenarios = isLive && liveScenarios ? liveScenarios : FORECASTS
+
   return (
     <div className={cn("rounded-2xl border border-border/60 bg-card p-6", className)}>
       <div className="flex items-center justify-between gap-3">
         <div>
           <h3 className="flex items-center gap-2 text-sm font-semibold">
             <BrainCircuit className="h-4 w-4 text-primary" /> Counterfactual hiring forecast
+            {loading && <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />}
+            {isLive && !loading && (
+              <span className="rounded-full bg-emerald-100 px-1.5 py-0.5 text-[8px] font-medium text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">
+                AI-generated
+              </span>
+            )}
           </h3>
           <p className="mt-1 text-xs text-muted-foreground">
             What if you hired Alice instead of Bob? The twin simulates the future under each scenario.
           </p>
         </div>
-        <div className="flex items-center gap-2 rounded-full border border-border/60 bg-secondary/40 px-3 py-1.5 text-xs">
-          <BarChart3 className="h-3.5 w-3.5 text-primary" />
-          <span className="text-muted-foreground">AI forecast</span>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 rounded-full border border-border/60 bg-secondary/40 px-3 py-1.5 text-xs">
+            <BarChart3 className="h-3.5 w-3.5 text-primary" />
+            <span className="text-muted-foreground">AI forecast</span>
+          </div>
+          {sessionId && (
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={fetchScenarios}
+              disabled={loading}
+              className="h-7 gap-1 rounded-full text-[10px]"
+            >
+              {loading ? <Loader2 className="h-2.5 w-2.5 animate-spin" /> : <RefreshCw className="h-2.5 w-2.5" />}
+              {isLive ? "Re-run" : "Run live"}
+            </Button>
+          )}
         </div>
       </div>
 
       {/* Comparison grid */}
       <div className="mt-5 grid gap-4 lg:grid-cols-3">
-        {FORECASTS.map((forecast, fi) => {
+        {scenarios.map((forecast, fi) => {
           const isNoHire = forecast.candidate === "No hire"
           return (
             <motion.div

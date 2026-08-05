@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Bot, Clock, Cpu, Trophy, User, Zap } from "lucide-react";
+import { Bot, Clock, Cpu, Loader2, RefreshCw, Trophy, User, Zap } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { AIBenchmark } from "@/lib/twinhire/types";
 
@@ -16,11 +18,39 @@ import type { AIBenchmark } from "@/lib/twinhire/types";
 
 export function AIBenchmarkPanel({
   candidateScore,
-  benchmarks,
+  benchmarks: initialBenchmarks,
+  sessionId,
 }: {
   candidateScore: number;
   benchmarks: AIBenchmark[];
+  sessionId?: string;
 }) {
+  const [benchmarks, setBenchmarks] = useState<AIBenchmark[]>(initialBenchmarks)
+  const [loading, setLoading] = useState(false)
+  const [isLive, setIsLive] = useState(false)
+
+  const rebenchmark = async () => {
+    if (!sessionId) return
+    setLoading(true)
+    try {
+      const res = await fetch("/api/twinhire/ai-benchmark", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId }),
+      })
+      if (!res.ok) throw new Error("failed")
+      const data = await res.json()
+      if (data.benchmarks?.length > 0) {
+        setBenchmarks(data.benchmarks)
+        setIsLive(true)
+      }
+    } catch {
+      // silent
+    } finally {
+      setLoading(false)
+    }
+  }
+
   if (!benchmarks || benchmarks.length === 0) return null;
 
   // Sort: candidate first, then AI models by score
@@ -51,6 +81,21 @@ export function AIBenchmarkPanel({
               Beat all AI models
             </span>
           </div>
+        )}
+        {sessionId && (
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={rebenchmark}
+            disabled={loading}
+            className="h-7 gap-1 rounded-full text-[10px]"
+          >
+            {loading ? (
+              <><Loader2 className="h-2.5 w-2.5 animate-spin" /> Re-running…</>
+            ) : (
+              <><RefreshCw className="h-2.5 w-2.5" /> {isLive ? "Re-run" : "Run live"}</>
+            )}
+          </Button>
         )}
       </div>
 
