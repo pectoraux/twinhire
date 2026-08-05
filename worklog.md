@@ -785,3 +785,45 @@ Stage Summary:
   9. Capability Genome ✅ (core IP)
 - TwinHire now has 45 components + 24 API routes.
 - Lint clean; all features browser-verified; pushed to GitHub.
+
+---
+Task ID: 26
+Agent: main (Z.ai Code orchestrator) — continuation 25
+Task: Global Capability Exchange — the architectural pivot from recruitment to capability market.
+
+Work Log:
+Implemented the final architectural pivot: TwinHire is now a Global Capability Exchange where capabilities are liquid. The primary entity is Work — people, AI agents, robots, software, and automation are simply different providers of work.
+
+3 new features:
+
+1. GlobalCapabilityExchange.tsx — the market view:
+   - Headline: "Capabilities are liquid" — "Like stock markets made capital liquid, this exchange makes capabilities liquid. The primary entity is Work."
+   - Market stats: 12,847 capabilities tracked, 8,421 companies recruiting, 147,892 professionals proven, 11.2% avg ROI
+   - Exchange table with 6 capabilities showing: demand change, supply level, median compensation, automation risk, projected growth, companies recruiting, professionals proven, avg ROI, lifecycle stage
+   - Capabilities span: AI Agent Design ($198K, +182% demand, Emerging), Revenue Operations ($162K, +144%, Growing), Industrial Automation ($148K, +121%, Growing), Predictive Maintenance ($134K, +87%, Growing), Customer Onboarding ($112K, +56%, Mainstream), Manual Data Entry ($52K, -34%, Automated)
+   - "This is not recruitment. This is a market."
+
+2. WorkforceDesigner.tsx — businesses don't recruit, they design workforces:
+   - 2 workforce compositions:
+     a) "Reduce support costs while improving resolution time": 1 Human Lead + 2 AI Support Agents + Workflow Automation + Knowledge Graph = -42% costs, -31% resolution time, +8pt CSAT, 312% ROI
+     b) "Scale sales operations without linear headcount growth": 1 RevOps Lead + AI Sales Analyst + CRM Automation + Sales Enablement = +47% revenue/rep, -3 FTEs, 428% ROI
+   - Each component has type (human/ai_agent/automation/software/training), role, cost, capabilities, and rationale
+   - "The platform isn't saying 'hire this person.' It's saying 'this is the optimal capability composition for achieving your business objective.'"
+
+3. CapabilityRoadmapAndForecast.tsx — two interconnected features:
+   - Professional Capability Roadmap: career operating system showing Mechanical Engineer → Predictive Maintenance → Industrial AI → Machine Vision → Digital Twin Engineering. Each step shows projected salary ($72K → $176K), delta, probability, time required, learning cost, demand level.
+   - Business Capability Forecasting: today's gaps + 6/12/18-month forecasted gaps. Shows how AI Governance goes from not-present → Critical → Critical → Critical, and Customer Intelligence from not-present → not-present → Essential → Essential.
+
+- Integrated all 3 into HeroView after the Capability Genome Viewer.
+- Agent Browser verification: all sections render — "Capabilities are liquid" headline, exchange table with 6 capabilities, workforce compositions with AI agents + humans + automation, professional roadmap with 4 steps, business forecasting with 4 timeframes. No runtime errors.
+
+Stage Summary:
+- TwinHire has completed the architectural pivot from recruitment platform → Capability Economy → Global Capability Exchange:
+  - The primary entity is Work (not candidates, jobs, or companies)
+  - Capabilities are how work gets done (people, AI, automation, software are providers)
+  - Capabilities are liquid (discoverable, investable, exchangeable like capital in stock markets)
+  - Businesses design workforces (not hire people — compose optimal capability mixes)
+  - Professionals follow capability roadmaps (not job applications — invest in high-value capabilities)
+  - The platform forecasts future capability needs (strategic planning product)
+- TwinHire now has 48 components + 24 API routes.
+- Lint clean; all features browser-verified; pushed to GitHub.
