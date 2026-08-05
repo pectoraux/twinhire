@@ -22,6 +22,9 @@ import { NetworkEffectsPanel } from "./NetworkEffectsPanel";
 import { LiveActivityFeed } from "./LiveActivityFeed";
 import { RoleSwitcher, type Role } from "./RoleSwitcher";
 import { SkillExplorer } from "./SkillExplorer";
+import { NetworkLeaderboard } from "./NetworkLeaderboard";
+import { OrganizationalMemory } from "./OrganizationalMemory";
+import { CapabilityMarketplace } from "./CapabilityMarketplace";
 import { Button } from "@/components/ui/button";
 import type { ViewKey } from "./Nav";
 
@@ -336,6 +339,28 @@ export function HeroView({ onNavigate }: { onNavigate: (v: ViewKey) => void }) {
           className="mt-8"
         >
           <SkillExplorer />
+        </motion.div>
+
+        {/* Organizational memory — the moat */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.7 }}
+          className="mt-8"
+        >
+          <OrganizationalMemory />
+        </motion.div>
+
+        {/* Capability marketplace */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.7 }}
+          className="mt-8"
+        >
+          <CapabilityMarketplace />
         </motion.div>
 
         <motion.div

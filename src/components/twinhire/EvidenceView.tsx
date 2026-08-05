@@ -30,6 +30,8 @@ import { CandidateJourney } from "./CandidateJourney";
 import { ConfidenceIndicator } from "./ConfidenceIndicator";
 import { SimulationDebrief } from "./SimulationDebrief";
 import { EvidenceExport } from "./EvidenceExport";
+import { AIBenchmarkPanel } from "./AIBenchmarkPanel";
+import { CounterfactualHiring } from "./CounterfactualHiring";
 import { cn } from "@/lib/utils";
 import type {
   BusinessTwinView,
@@ -231,6 +233,16 @@ export function EvidenceView({
           />
         </div>
 
+        {/* AI vs Human benchmark */}
+        {evaluation.aiBenchmarks && evaluation.aiBenchmarks.length > 0 && (
+          <div className="mt-6">
+            <AIBenchmarkPanel
+              candidateScore={avg}
+              benchmarks={evaluation.aiBenchmarks}
+            />
+          </div>
+        )}
+
         {/* Scores: radar + bars */}
         <div className="mt-8 grid gap-6 lg:grid-cols-[420px_1fr]">
           <div className="rounded-2xl border border-border/60 bg-card p-6">
@@ -419,6 +431,11 @@ export function EvidenceView({
             sessionsObserved={history.length}
             twinFidelity={twin?.fidelity ?? 72}
           />
+        </div>
+
+        {/* Counterfactual hiring forecast */}
+        <div className="mt-8">
+          <CounterfactualHiring />
         </div>
 
         {/* CTAs */}

@@ -20,6 +20,7 @@ import {
 import { CategoryBadge, FidelityRing, ScoreBar, TrendPill, LiveDot } from "./primitives";
 import { TwinKnowledgeGraph } from "./TwinKnowledgeGraph";
 import { DataSourcesPanel } from "./DataSourcesPanel";
+import { ContinuousBusinessSimulation } from "./ContinuousBusinessSimulation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -266,6 +267,11 @@ export function TwinDashboardView({
         {/* Twin knowledge graph */}
         <div className="mt-10">
           <TwinKnowledgeGraph twin={twin} />
+        </div>
+
+        {/* Continuous business simulation */}
+        <div className="mt-10">
+          <ContinuousBusinessSimulation twin={twin} />
         </div>
       </div>
     </div>

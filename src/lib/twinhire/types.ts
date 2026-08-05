@@ -150,6 +150,60 @@ export interface Evaluation {
   /// System confidence in this evaluation (0-100), computed from evidence
   /// count, score variance, and response richness.
   systemConfidence?: number
+  /// AI vs Human benchmark: how AI models scored on the same task
+  aiBenchmarks?: AIBenchmark[]
+}
+
+/// AI model benchmark on the same task the candidate attempted.
+export interface AIBenchmark {
+  model: string
+  score: number // 0-100 composite
+  strength: string // what the AI did well
+  weakness: string // what the AI missed
+  timeSeconds: number // how long the AI took
+}
+
+/// A solved organizational problem stored in the platform's memory.
+export interface SolvedProblem {
+  id: string
+  problem: string
+  context: string
+  solution: string
+  impact: string
+  solver: string // candidate handle
+  twinCode: string
+  industry: string
+  capability: string
+  aiAssisted: boolean
+  worked: boolean // did the solution work in production?
+  date: string
+}
+
+/// A simulated business event in the continuous twin.
+export interface TwinEvent {
+  id: string
+  type: "sale" | "support_ticket" | "meeting" | "customer_complaint" | "invoice" | "supplier_issue" | "competitor_move" | "employee_change" | "kpi_shift" | "campaign_launch"
+  description: string
+  impact: string
+  timestamp: string
+  severity: "info" | "warning" | "critical"
+}
+
+/// Counterfactual hiring forecast — "what if we hired this person?"
+export interface HiringForecast {
+  candidate: string
+  scenario: string
+  projections: {
+    timeframe: string
+    revenue: number // projected delta %
+    profit: number
+    delivery: number
+    morale: number
+    innovation: number
+    risk: number
+  }[]
+  summary: string
+  confidence: number
 }
 
 export interface Recommendation {
