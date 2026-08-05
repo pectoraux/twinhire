@@ -1,17 +1,21 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useCallback, useEffect, useState } from "react";
 import {
   AlertTriangle,
   DollarSign,
   Headphones,
   Layers,
+  Loader2,
+  RefreshCw,
   TrendingDown,
   TrendingUp,
   Users,
   Zap,
 } from "lucide-react";
 import { LiveDot } from "./primitives";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { BusinessTwinView } from "@/lib/twinhire/types";
 
@@ -91,6 +95,15 @@ function generateEvents(twin: BusinessTwinView) {
   return events.slice(0, 6)
 }
 
+interface LiveEvent {
+  id: string
+  type: string
+  description: string
+  impact: string
+  severity: "info" | "warning" | "critical"
+  time: string
+}
+
 export function ContinuousBusinessSimulation({
   twin,
   className,
@@ -98,7 +111,38 @@ export function ContinuousBusinessSimulation({
   twin: BusinessTwinView;
   className?: string;
 }) {
-  const events = generateEvents(twin)
+  const [events, setEvents] = useState<LiveEvent[]>(generateEvents(twin))
+  const [liveEvents, setLiveEvents] = useState<LiveEvent[]>([])
+  const [loading, setLoading] = useState(false)
+  const [isLive, setIsLive] = useState(false)
+
+  const fetchLiveEvents = useCallback(async () => {
+    setLoading(true)
+    try {
+      const res = await fetch("/api/twinhire/twin-tick", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ twinId: twin.id }),
+      })
+      if (!res.ok) throw new Error("failed")
+      const data = await res.json()
+      if (data.events?.length > 0) {
+        setLiveEvents(data.events)
+        setIsLive(true)
+      }
+    } catch {
+      // silent — keep static events as fallback
+    } finally {
+      setLoading(false)
+    }
+  }, [twin.id])
+
+  // Auto-fetch live events on mount
+  useEffect(() => {
+    void fetchLiveEvents()
+  }, [fetchLiveEvents])
+
+  const displayEvents = isLive && liveEvents.length > 0 ? liveEvents : events
 
   return (
     <div className={cn("rounded-2xl border border-border/60 bg-card p-6", className)}>
@@ -111,9 +155,26 @@ export function ContinuousBusinessSimulation({
             The twin is alive. Candidates enter an organization that&apos;s already running — not a static snapshot.
           </p>
         </div>
-        <div className="flex items-center gap-2 rounded-full border border-emerald-200/70 bg-emerald-50 px-3 py-1.5 text-xs dark:border-emerald-500/20 dark:bg-emerald-500/10">
-          <LiveDot className="h-1.5 w-1.5" />
-          <span className="font-medium text-emerald-700 dark:text-emerald-300">simulating</span>
+        <div className="flex items-center gap-2">
+          {isLive && (
+            <div className="flex items-center gap-2 rounded-full border border-emerald-200/70 bg-emerald-50 px-3 py-1.5 text-xs dark:border-emerald-500/20 dark:bg-emerald-500/10">
+              <LiveDot className="h-1.5 w-1.5" />
+              <span className="font-medium text-emerald-700 dark:text-emerald-300">AI-generated</span>
+            </div>
+          )}
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={fetchLiveEvents}
+            disabled={loading}
+            className="h-8 gap-1.5 rounded-full text-xs"
+          >
+            {loading ? (
+              <><Loader2 className="h-3 w-3 animate-spin" /> Generating…</>
+            ) : (
+              <><RefreshCw className="h-3 w-3" /> Next hour</>
+            )}
+          </Button>
         </div>
       </div>
 
@@ -138,7 +199,7 @@ export function ContinuousBusinessSimulation({
           <Zap className="h-3 w-3" /> Operational events (last 2 hours)
         </div>
         <div className="mt-2 space-y-1.5 max-h-[280px] overflow-y-auto scroll-slim">
-          {events.map((event, i) => {
+          {displayEvents.map((event, i) => {
             const Icon = EVENT_ICONS[event.type] ?? Layers
             return (
               <motion.div

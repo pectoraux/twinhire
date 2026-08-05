@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useState } from "react";
 import {
   Bot,
   Brain,
@@ -8,13 +9,16 @@ import {
   Clock,
   Cpu,
   GitBranch,
+  Loader2,
   MemoryStick,
   MessageSquare,
+  Play,
   Sparkles,
   TrendingUp,
   Users,
   Zap,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 /**
@@ -129,6 +133,42 @@ const ACTION_COLORS: Record<string, string> = {
 }
 
 export function MultiAgentEmployees({ className }: { className?: string }) {
+  const [runningAgent, setRunningAgent] = useState<string | null>(null)
+  const [liveSession, setLiveSession] = useState<{
+    agent: string
+    handle: string
+    session: {
+      sessionSummary: string
+      actions: { type: string; description: string; reasoning: string }[]
+      decisionsMade: string[]
+      risksIdentified: string[]
+      questionsAsked: string[]
+      nextSteps: string[]
+      collaborationNote: string
+    }
+  } | null>(null)
+  const [error, setError] = useState("")
+
+  const runSession = async (handle: string) => {
+    setRunningAgent(handle)
+    setError("")
+    setLiveSession(null)
+    try {
+      const res = await fetch("/api/twinhire/agent-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ agentHandle: handle }),
+      })
+      if (!res.ok) throw new Error("failed")
+      const data = await res.json()
+      setLiveSession(data)
+    } catch {
+      setError("Session failed — try again")
+    } finally {
+      setRunningAgent(null)
+    }
+  }
+
   return (
     <div className={cn("rounded-2xl border border-border/60 bg-card p-6", className)}>
       <div className="flex items-center justify-between gap-3">
@@ -265,9 +305,123 @@ export function MultiAgentEmployees({ className }: { className?: string }) {
               <Users className="mt-0.5 h-2.5 w-2.5 shrink-0 text-violet-500" />
               <span className="text-[9px] text-muted-foreground italic">{agent.collaborationStyle}</span>
             </div>
+
+            {/* Run session button */}
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => runSession(agent.handle)}
+              disabled={runningAgent !== null}
+              className="mt-3 h-7 w-full gap-1 rounded-full text-[10px]"
+            >
+              {runningAgent === agent.handle ? (
+                <><Loader2 className="h-2.5 w-2.5 animate-spin" /> Running session…</>
+              ) : (
+                <><Play className="h-2.5 w-2.5" /> Run live session</>
+              )}
+            </Button>
           </motion.div>
         ))}
       </div>
+
+      {/* Live session result */}
+      {liveSession && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-4 rounded-2xl border border-primary/30 bg-primary/[0.03] p-4"
+        >
+          <div className="flex items-center gap-2">
+            <span className="grid h-7 w-7 place-items-center rounded-full bg-primary text-primary-foreground text-xs font-bold">
+              {liveSession.agent.charAt(0)}
+            </span>
+            <div>
+              <div className="text-sm font-semibold">{liveSession.agent} — live session</div>
+              <div className="text-[10px] text-muted-foreground">AI-generated work session inside the twin</div>
+            </div>
+            <span className="ml-auto rounded-full bg-emerald-100 px-2 py-0.5 text-[9px] font-medium text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">
+              ✓ completed
+            </span>
+          </div>
+
+          <p className="mt-2 text-xs leading-relaxed text-foreground/90">{liveSession.session.sessionSummary}</p>
+
+          {/* Actions */}
+          <div className="mt-3">
+            <div className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground">Actions taken</div>
+            <div className="mt-1 space-y-1">
+              {liveSession.session.actions.map((a, i) => {
+                const Icon = ACTION_ICONS[a.type] ?? GitBranch
+                const colorCls = ACTION_COLORS[a.type] ?? "text-muted-foreground bg-secondary"
+                return (
+                  <div key={i} className="flex items-start gap-1.5">
+                    <span className={cn("mt-0.5 grid h-4 w-4 shrink-0 place-items-center rounded", colorCls)}>
+                      <Icon className="h-2 w-2" />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[10px] leading-tight text-foreground/80">{a.description}</p>
+                      <p className="text-[9px] text-muted-foreground/70 italic">{a.reasoning}</p>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Decisions + risks */}
+          <div className="mt-3 grid gap-2 sm:grid-cols-2">
+            {liveSession.session.decisionsMade.length > 0 && (
+              <div className="rounded-lg bg-secondary/30 p-2">
+                <div className="text-[9px] font-medium text-primary">Decisions made</div>
+                <ul className="mt-0.5 space-y-0.5">
+                  {liveSession.session.decisionsMade.map((d, i) => (
+                    <li key={i} className="text-[9px] text-muted-foreground">→ {d}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {liveSession.session.risksIdentified.length > 0 && (
+              <div className="rounded-lg bg-rose-50/50 p-2 dark:bg-rose-500/[0.06]">
+                <div className="text-[9px] font-medium text-rose-600 dark:text-rose-400">Risks flagged</div>
+                <ul className="mt-0.5 space-y-0.5">
+                  {liveSession.session.risksIdentified.map((r, i) => (
+                    <li key={i} className="text-[9px] text-muted-foreground">⚠ {r}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          {/* Questions + next steps */}
+          <div className="mt-2 grid gap-2 sm:grid-cols-2">
+            {liveSession.session.questionsAsked.length > 0 && (
+              <div className="rounded-lg bg-blue-50/50 p-2 dark:bg-blue-500/[0.06]">
+                <div className="text-[9px] font-medium text-blue-600 dark:text-blue-400">Questions raised</div>
+                <ul className="mt-0.5 space-y-0.5">
+                  {liveSession.session.questionsAsked.map((q, i) => (
+                    <li key={i} className="text-[9px] text-muted-foreground">? {q}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {liveSession.session.nextSteps.length > 0 && (
+              <div className="rounded-lg bg-emerald-50/50 p-2 dark:bg-emerald-500/[0.06]">
+                <div className="text-[9px] font-medium text-emerald-600 dark:text-emerald-400">Next steps</div>
+                <ul className="mt-0.5 space-y-0.5">
+                  {liveSession.session.nextSteps.map((s, i) => (
+                    <li key={i} className="text-[9px] text-muted-foreground">→ {s}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          <p className="mt-2 text-[9px] italic text-muted-foreground">
+            Collaboration: {liveSession.session.collaborationNote}
+          </p>
+        </motion.div>
+      )}
+      {error && <p className="mt-2 text-xs text-rose-600">{error}</p>}
 
       {/* What this means */}
       <div className="mt-4 flex items-start gap-2 rounded-xl bg-gradient-to-r from-primary/[0.06] to-[oklch(0.74_0.135_70)]/[0.06] p-4">
