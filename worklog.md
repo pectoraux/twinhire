@@ -567,3 +567,37 @@ Stage Summary:
   from the user's strategic analysis are now implemented.
 - TwinHire now has 41 components.
 - Lint clean; all features browser-verified; pushed to GitHub.
+
+---
+Task ID: 21
+Agent: main (Z.ai Code orchestrator) — continuation 20
+Task: Make the deep intelligence genuinely functional — LLM-generated twin events + real agent work sessions.
+
+Work Log:
+- Created /api/twinhire/twin-tick: LLM generates the next hour of business events for a twin. Takes twinId, reads the twin's KPIs/problems/objectives, and asks the LLM to generate 4-6 realistic events with types (sale, support_ticket, meeting, customer_complaint, supplier_issue, competitor_move, employee_change, kpi_shift, campaign_launch), descriptions, impacts, and severity levels. Also generates KPI micro-movements.
+
+- Created /api/twinhire/agent-session: LLM simulates an AI employee working inside the twin. Takes agentHandle and optional twinId/taskContext. Generates a 15-minute work session with:
+  - sessionSummary (2-3 sentences)
+  - actions (6-10, typed: plan/question/pushback/collaborate/improve/decision/risk_identified)
+  - decisionsMade (2-3 concrete decisions)
+  - risksIdentified (1-2 risks flagged)
+  - questionsAsked (1-2 questions raised)
+  - nextSteps (2-3 proposed next steps)
+  - collaborationNote (how this agent would collaborate with others)
+  Falls back to first twin if twinId not provided.
+
+- Updated ContinuousBusinessSimulation to fetch live events from the API on mount (useEffect). Added "Next hour" button to regenerate events. Shows "AI-generated" badge when live events are loaded. Falls back to static events if the API fails. Uses displayEvents for rendering.
+
+- Updated MultiAgentEmployees to add "Run live session" buttons on each agent card. Clicking triggers the agent-session API and displays the full result in a live session panel: session summary, actions with reasoning (typed icons + colors), decisions made, risks flagged, questions raised, next steps, and collaboration note.
+
+- Agent Browser verification:
+  - Continuous simulation: auto-fetched live LLM-generated events on dashboard load. Generated 5 industry-specific events for TWIN-129 (D2C): "Limited edition summer collection sells out 2 days ahead of forecast", "Customer emails about delayed shipping", "Marketing and finance teams meet to reconcile attribution discrepancies", "Key packaging supplier notifies of 10% price increase" (critical), "Senior merchandiser resigns to join competitor" (critical). "AI-generated" badge visible. "Next hour" button works.
+  - Agent session: clicked "Run live session" on A. Okafor → API generated 8 actions, 3 decisions, 2 risks. Live session panel rendered with "A. Okafor — live session", "✓ completed", "ACTIONS TAKEN", "Decisions made", "Risks flagged", "Questions raised", "Next steps". No runtime errors.
+
+Stage Summary:
+- The deep intelligence is now genuinely functional — not just static UI:
+  1. The continuous business simulation generates real LLM-created events specific to each twin's industry and context
+  2. AI employees can actually "work" — the LLM simulates a real work session with decisions, pushback, questions, risks, and collaboration
+- This moves TwinHire from "impressive demo with static intelligence displays" to "genuinely functional AI-powered platform where the intelligence is real"
+- TwinHire now has 41 components + 12 API routes.
+- Lint clean; all features browser-verified; pushed to GitHub.
