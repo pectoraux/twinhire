@@ -32,6 +32,7 @@ import { SimulationDebrief } from "./SimulationDebrief";
 import { EvidenceExport } from "./EvidenceExport";
 import { AIBenchmarkPanel } from "./AIBenchmarkPanel";
 import { CounterfactualHiring } from "./CounterfactualHiring";
+import { MultiAgentEmployees } from "./MultiAgentEmployees";
 import { cn } from "@/lib/utils";
 import type {
   BusinessTwinView,
@@ -436,6 +437,11 @@ export function EvidenceView({
         {/* Counterfactual hiring forecast */}
         <div className="mt-8">
           <CounterfactualHiring />
+        </div>
+
+        {/* Multi-agent employees */}
+        <div className="mt-8">
+          <MultiAgentEmployees />
         </div>
 
         {/* CTAs */}
