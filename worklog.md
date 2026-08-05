@@ -682,3 +682,40 @@ Stage Summary:
   7. Capability Wallet — portable, evidence-backed, not tied to one employer
 - TwinHire now has 43 components + 22 API routes.
 - Lint clean; all features browser-verified; pushed to GitHub.
+
+---
+Task ID: 24
+Agent: main (Z.ai Code orchestrator) — continuation 23
+Task: Capability ROI Engine — the intelligence product no recruiter can provide.
+
+Work Log:
+- Created /api/twinhire/capability-roi: the LLM analyzes what happens when a business adds a specific capability. Takes a capability name + optional twinId, reads the twin's KPIs/problems, and generates:
+  - ROI headline (e.g. "D2C Consumer Goods companies with 100-200 employees adding Process Automation Engineering increased operating margins by 14.3% within 16 months")
+  - 4-6 business projections (metric, baseline→projected, delta, timeframe, confidence)
+  - Cross-industry pattern (e.g. "Based on 156 PE-backed D2C companies...")
+  - Comparable capabilities with avg ROI and faster-to-value flag
+  - Risks of NOT adding the capability
+  - Hiring recommendation
+
+- Built CapabilityRoiEngine.tsx: interactive ROI analyzer with:
+  - Text input for any capability + 6 quick-select buttons (Process Automation, Customer Onboarding, Demand Forecasting, AI Agent Design, Revenue Operations, Churn Prediction)
+  - Animated result display: ROI headline, projection cards (baseline→projected with delta and confidence), cross-industry pattern, comparable capabilities, risks, recommendation
+  - "AI-analyzed" badge when results are loaded
+  - "Analyze another" reset button
+
+- Integrated into EvidenceView after multi-agent employees.
+- Agent Browser verification: clicked "Process Automation Engineering" → LLM generated ROI headline "D2C Consumer Goods companies with 100-200 employees adding Process Automation Engineering increased operating margins by 14.3% within 16 months through inventory optimization and marketing efficiency gains." Projections showed Contribution Margin with baseline→projected, delta, timeframe, confidence. Cross-industry pattern, comparable capabilities, risks, and recommendation all rendered. No runtime errors.
+
+Stage Summary:
+- The Capability ROI Engine is the platform's most valuable feature — an intelligence product no recruiter can provide. It answers: "What happens when we add this capability?" with cross-industry ROI projections, comparable alternatives, risk assessment, and hiring recommendations.
+- This completes the four interconnected products of the Capability Intelligence Network:
+  1. Capability Discovery (for businesses) — answer questions, AI identifies gaps ✅
+  2. Capability Marketplace — hire for capabilities ✅
+  3. Capability Proof Engine — simulations produce evidence ✅
+  4. Capability Intelligence Graph — cross-industry patterns ✅
+  5. Capability Market Intelligence — Bloomberg Terminal ✅
+  6. Capability Investment Planner — "if I learn X" ✅
+  7. Capability Wallet — portable evidence-backed scores ✅
+  8. Capability ROI Engine — what happens when you add this? ✅
+- TwinHire now has 44 components + 23 API routes.
+- Lint clean; all features browser-verified; pushed to GitHub.
