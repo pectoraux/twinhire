@@ -883,3 +883,61 @@ Stage Summary:
   12. Capability Wallet (portable evidence) ✅
 - TwinHire now has 50 components + 24 API routes.
 - Lint clean; all features browser-verified; pushed to GitHub.
+
+---
+Task ID: 28
+Agent: main (Z.ai Code orchestrator) — continuation 27
+Task: Universal Simulation Framework — one engine, every profession.
+
+Work Log:
+- Built UniversalSimulationFramework.tsx: the configurable simulation engine where every profession plugs in via blueprints. Features:
+  
+  6-step pipeline visualization:
+  1. Capability Genome (16-field structured definition)
+  2. Simulation Blueprint (profession-specific scenario config)
+  3. Scenario Generator (LLM creates realistic tasks)
+  4. Evidence Generator (candidate performs real work)
+  5. Evaluator (AI scores against DNA weightings)
+  6. Business Impact Model (project ROI from demonstrated capability)
+
+  6 profession blueprints, each with simulations, evidence model (DNA weightings as stacked bars), and business impact:
+  
+  1. Software Engineer: Debug distributed system, Build API, Review code, Handle production outage
+     DNA: Architecture 25%, Performance 20%, Testing 20%, Maintainability 15%, Decision making 20%
+     Impact: System reliability, development velocity, technical debt reduction
+
+  2. Electrician: Diagnose intermittent outage, Choose equipment, Perform repair, Comply with regulations
+     DNA: Safety 30%, Diagnosis 25%, Speed 20%, Compliance 15%, Documentation 10%
+     Impact: Safety compliance, uptime, maintenance cost reduction
+
+  3. Scientist: Analyze unexpected result, Design next experiment, Review literature, Choose statistical method
+     DNA: Scientific reasoning 25%, Experimental design 25%, Statistical thinking 20%, Communication 15%, Reproducibility 15%
+     Impact: R&D output quality, time-to-discovery, publication impact
+
+  4. Nurse: Triage patient, Administer medication, Handle emergency, Document care
+     DNA: Clinical accuracy 30%, Patient safety 25%, Speed 15%, Communication 15%, Documentation 15%
+     Impact: Patient outcomes, safety incidents, care quality scores
+
+  5. CNC Operator: Set up machine, Read blueprint, Adjust tolerances, Quality inspect
+     DNA: Precision 30%, Speed 25%, Safety 20%, Quality 15%, Maintenance 10%
+     Impact: Production quality, throughput, scrap rate reduction
+
+  6. Procurement Manager: Negotiate contract, Evaluate supplier, Manage shortage, Optimize spend
+     DNA: Negotiation 25%, Analysis 25%, Risk management 20%, Relationship 15%, Cost optimization 15%
+     Impact: Cost savings, supply chain resilience, supplier quality
+
+  Key message: "New capabilities become data, not software projects. Every profession plugs into the same framework."
+
+- Integrated into HeroView after Capability DNA & Lifecycle.
+- Agent Browser verification: all 6 profession blueprints render with simulations, DNA stacked bars, and business impact. Pipeline shows all 6 steps. No runtime errors.
+
+Stage Summary:
+- The Universal Simulation Framework is the final vision piece — it makes the platform infinitely extensible. Every profession (engineers, scientists, technicians, healthcare workers, trades, managers) plugs into the same engine via blueprints. New capabilities become data, not software projects.
+- TwinHire now has 51 components + 24 API routes.
+- The platform implements all 5 phases from the user's 18-month roadmap:
+  Phase 1 — Global Capability Ontology ✅ (CapabilityOntology + CapabilityGenome)
+  Phase 2 — Universal Simulation Framework ✅ (this feature)
+  Phase 3 — Longitudinal Capability Graph ✅ (OrganizationalMemory + EvidenceTimeline)
+  Phase 4 — Workforce Composition Intelligence ✅ (WorkforceDesigner)
+  Phase 5 — Global Capability Exchange ✅ (GlobalCapabilityExchange)
+- Lint clean; all features browser-verified; pushed to GitHub.
