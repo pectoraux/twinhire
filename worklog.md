@@ -719,3 +719,69 @@ Stage Summary:
   8. Capability ROI Engine — what happens when you add this? ✅
 - TwinHire now has 44 components + 23 API routes.
 - Lint clean; all features browser-verified; pushed to GitHub.
+
+---
+Task ID: 25
+Agent: main (Z.ai Code orchestrator) — continuation 24
+Task: Capability Genome Viewer — the 16-field structured definition (core IP).
+
+Work Log:
+- Created /api/twinhire/capability-genome: the LLM generates the complete 16-field Capability Genome for any capability. Returns:
+  - id, name, category
+  - contributesTo (what it contributes to)
+  - improvesKpis (which KPIs it improves)
+  - industries (where it matters)
+  - prerequisites (must have before learning this)
+  - complementary (works well with)
+  - salaryPremium, demandTrend, automationRisk, aiAugmentation, projectedRoi
+  - knowledge, skills, behaviors, tools
+  - evidenceRequirements (how to prove this capability)
+  - learningPaths (how to acquire it)
+
+- Built CapabilityGenomeViewer.tsx: interactive genome explorer with:
+  - Text input + 6 quick-select capabilities (AI Agent Design, Demand Forecasting, Process Automation, Revenue Operations, Customer Onboarding, Churn Prediction)
+  - "Generate genome" button with "Sequencing…" loading state
+  - "AI-generated" badge when loaded
+  - Header with category badge, ID, name, and projected ROI
+  - 4 metric cards: Salary premium, Demand trend, Automation risk, AI augmentation
+  - AI augmentation opportunity section (violet)
+  - 11 expandable genome sections (animated):
+    1. Knowledge areas (checkmarks)
+    2. Skills required (bullets)
+    3. Expected behaviors (bullets)
+    4. Tools commonly used (badges)
+    5. Evidence requirements (checkmarks — observable, measurable)
+    6. Learning paths (bullets)
+    7. Contributes to (badges)
+    8. Improves KPIs (badges)
+    9. Industries where it matters (badges)
+    10. Prerequisite capabilities (bullets)
+    11. Complementary capabilities (bullets)
+
+- Integrated into HeroView after the Capability Economy section.
+- Agent Browser verification:
+  - Clicked "AI Agent Design" → LLM generated full genome with "AI-generated" badge
+  - 4 metric cards rendered (Salary premium, Demand trend, Automation risk, AI augmentation)
+  - 11 expandable sections visible
+  - Expanded "Evidence requirements" → showed 5 specific, measurable requirements:
+    "Built production-ready AI agent with measurable KPI improvements",
+    "Published case study on agent design methodology",
+    "Reduced customer response time by 40% through agent implementation",
+    "Created reusable agent components used by 3+ teams",
+    "Implemented agent with 85%+ intent recognition accuracy"
+  - No runtime errors.
+
+Stage Summary:
+- The Capability Genome is the platform's core intellectual property — the structured 16-field definition that everything else revolves around. Every simulation, evidence model, scoring rubric, market intelligence insight, and ROI projection is derived from this genome.
+- With this addition, the Capability Intelligence Network now has all interconnected products:
+  1. Capability Discovery ✅
+  2. Capability Marketplace ✅
+  3. Capability Proof Engine ✅
+  4. Capability Intelligence Graph ✅
+  5. Capability Market Intelligence ✅
+  6. Capability Investment Planner ✅
+  7. Capability Wallet ✅
+  8. Capability ROI Engine ✅
+  9. Capability Genome ✅ (core IP)
+- TwinHire now has 45 components + 24 API routes.
+- Lint clean; all features browser-verified; pushed to GitHub.
