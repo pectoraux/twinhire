@@ -30,6 +30,8 @@ import { CapabilityGenomeViewer } from "./CapabilityGenomeViewer";
 import { GlobalCapabilityExchange } from "./GlobalCapabilityExchange";
 import { CapabilityRoadmapAndForecast } from "./CapabilityRoadmapAndForecast";
 import { WorkforceDesigner } from "./WorkforceDesigner";
+import { CapabilityOntology } from "./CapabilityOntology";
+import { CapabilityDNAAndLifecycle } from "./CapabilityDNAAndLifecycle";
 import { Button } from "@/components/ui/button";
 import type { ViewKey } from "./Nav";
 
@@ -421,6 +423,27 @@ export function HeroView({ onNavigate }: { onNavigate: (v: ViewKey) => void }) {
           className="mt-8"
         >
           <WorkforceDesigner />
+        </motion.div>
+
+        {/* Capability Ontology + DNA & Lifecycle */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.7 }}
+          className="mt-8"
+        >
+          <CapabilityOntology />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.7 }}
+          className="mt-8"
+        >
+          <CapabilityDNAAndLifecycle />
         </motion.div>
 
         <motion.div
