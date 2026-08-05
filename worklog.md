@@ -634,3 +634,51 @@ Stage Summary:
   10. Use case anonymization → /api/twinhire/use-case (live AI anonymization)
 - TwinHire now has 41 components + 21 API routes, all LLM-powered.
 - Lint clean; all features browser-verified; pushed to GitHub.
+
+---
+Task ID: 23
+Agent: main (Z.ai Code orchestrator) — continuation 22
+Task: The Capability Economy — market intelligence, investment planner, wallet, discovery engine.
+
+Work Log:
+Implemented the Capability Economy framework from the user's evolved vision:
+
+1. Capability Genome type system (types.ts):
+   - CapabilityGenome: 16-field structured definition (contributesTo, improvesKpis, industries, prerequisites, complementary, salaryPremium, demandTrend, automationRisk, aiAugmentation, projectedRoi, knowledge, skills, behaviors, tools, evidenceRequirements, learningPaths)
+   - DiscoveredCapability: AI-discovered gap with projectedRevenueImpact, projectedEbitdaImpact, costReduction, confidence, urgency, timeToValue, hiringDifficulty, aiReplaceLikelihood, aiAugmentLikelihood, recommendedOrder
+   - CapabilityMarketData: demandGrowth, medianSalary, automationRisk, aiAugmentation, companiesInterested, industries
+   - CapabilityInvestment: currentSalary → projectedSalary, probability, timeRequired, demandLevel, newOpportunities, hiringProbability
+   - CapabilityWalletEntry: score (evidence-backed), evidenceCount, simulations, portable, certificationEligible
+
+2. /api/twinhire/capability-discovery: businesses answer 6 questions about pain points. The LLM analyzes answers + twin context (KPIs, problems, objectives) and produces 5-8 ranked missing capabilities with projected business impact, ROI, AI replacement/augmentation likelihood, and recommended hiring sequence. Returns summary + totalProjectedImpact.
+
+3. CapabilityDiscovery.tsx: business questionnaire with 6 questions:
+   - "What frustrates your team?"
+   - "Where do projects stall?"
+   - "What takes too long?"
+   - "What requires too many people?"
+   - "Which KPIs are declining?"
+   - "What opportunities are you missing?"
+   On submit, calls the API and displays ranked capabilities with revenue impact, EBITDA, cost reduction, confidence, urgency, time-to-value, AI augment/replace likelihood.
+
+4. CapabilityEconomy.tsx: the Bloomberg Terminal for organizational capabilities:
+   - Market Intelligence: 3 cards — Top Growing (AI Governance +187%, RevOps +144%, Industrial Automation +121%), Highest Paying (Semiconductor $242K, Robotics $216K), Fastest Growing Industries (Battery Manufacturing +34%, Medical Devices +28%)
+   - Investment Planner: "If I learn X, what happens?" — 3 examples showing current→projected salary, delta, probability, time required, demand level, new opportunities (e.g. "AI Workflow Design: $65K→$82K, 87% probability, 6 weeks")
+   - Capability Wallet: 6 portable evidence-backed scores with CERT badges, evidence counts, portability indicator. "Scores are backed by evidence, not exams."
+
+- Integrated: CapabilityDiscovery in TwinDashboardView (after twin evolution), CapabilityEconomy in HeroView (after capability marketplace).
+- Agent Browser verification:
+  - CapabilityEconomy: all sections render — market intelligence with growing/paying/industries, investment planner with 3 salary projections, wallet with 6 capabilities and CERT badges. "Stop hiring people. Start hiring capabilities." headline.
+  - CapabilityDiscovery: questionnaire with 6 questions renders. Filled 3 answers and clicked "Discover capabilities" → LLM generated ranked capabilities with "CRITICAL" urgency, "AI augment", "AI replace", "Time-to-value", and "capabilities found" badge. No runtime errors.
+
+Stage Summary:
+- TwinHire has evolved from a recruitment platform to a Capability Economy:
+  1. Capability Discovery (for businesses) — answer questions, AI identifies missing capabilities with ROI
+  2. Capability Marketplace — hire for capabilities, not titles
+  3. Capability Proof Engine — simulations produce evidence-backed scores
+  4. Capability Intelligence Graph — the platform's moat (organizational memory)
+  5. Capability Market Intelligence — Bloomberg Terminal for capabilities
+  6. Capability Investment Planner — "if I learn X, what happens?"
+  7. Capability Wallet — portable, evidence-backed, not tied to one employer
+- TwinHire now has 43 components + 22 API routes.
+- Lint clean; all features browser-verified; pushed to GitHub.
