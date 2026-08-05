@@ -827,3 +827,59 @@ Stage Summary:
   - The platform forecasts future capability needs (strategic planning product)
 - TwinHire now has 48 components + 24 API routes.
 - Lint clean; all features browser-verified; pushed to GitHub.
+
+---
+Task ID: 27
+Agent: main (Z.ai Code orchestrator) — continuation 26
+Task: Capability Ontology + DNA + Lifecycle — the core IP layers.
+
+Work Log:
+Implemented 3 new features completing the Global Capability Exchange:
+
+1. CapabilityOntology.tsx — the world's capability relationship graph:
+   - Shows how capabilities connect via 4 relationship types: requires, supports, improves, reduces
+   - Example graph: Industrial Automation → requires PLC Programming → requires Electrical Engineering → supports Manufacturing → improves OEE → improves Yield → reduces Downtime
+   - Additional connections: Machine Vision supports Industrial Automation, Predictive Maintenance supports Industrial Automation and reduces Downtime, Data Analysis requires Predictive Maintenance
+   - Visual: each node shows its outgoing relationships as badges with colored icons
+   - "Everything becomes connected. This is the shared language of the platform."
+
+2. CapabilityDNAAndLifecycle.tsx — two core IP layers in one component:
+   
+   Capability DNA:
+   - Stacked bar visualization showing measurement weightings per profession
+   - Engineers: Skill 35%, Knowledge 20%, Decision Quality 15%, Behavior 15%, Communication 5%, Creativity 5%, Adaptability 5%
+   - Scientists: Knowledge 30%, Decision Quality 20%, Skill 20%, Behavior 10%, Communication 10%
+   - Technicians: Skill 45%, Behavior 20%, Knowledge 15%, Decision Quality 10%
+   - Managers: Decision Quality 25%, Skill 20%, Behavior 20%, Knowledge 15%, Communication 10%
+   - "Not everyone should have one score. Each profession gets its own evidence model."
+
+   Capability Lifecycle:
+   - 6 stages: Emerging → Growing → Mainstream → Commodity → Automated → Obsolete
+   - Each stage has: description, example capability, and recommended action
+   - Emerging (AI Agent Design) → Invest early
+   - Growing (Revenue Operations) → Hire now
+   - Mainstream (Customer Onboarding) → Train internally
+   - Commodity (Manual QA Testing) → Outsource
+   - Automated (Manual Data Entry) → Automate
+   - Obsolete (Fax Machine Repair) → Deprioritize
+   - "Every capability moves through a lifecycle. Businesses know whether to hire, automate, outsource, or train."
+
+- Integrated all 3 into HeroView after the Workforce Designer.
+- Agent Browser verification: all sections render — ontology with requires/supports/improves/reduces relationships, DNA with 4 profession profiles and stacked bars, lifecycle with 6 stages and recommended actions. No runtime errors.
+
+Stage Summary:
+- The Global Capability Exchange now has all core IP layers:
+  1. Capability Genome (16-field structured definition) ✅
+  2. Capability Ontology (relationship graph) ✅
+  3. Capability DNA (measurement weightings per profession) ✅
+  4. Capability Lifecycle (emerging → obsolete with hire/automate/outsource/train) ✅
+  5. Global Capability Exchange (market view) ✅
+  6. Workforce Designer (optimal composition) ✅
+  7. Professional Roadmap (career OS) ✅
+  8. Business Forecasting (strategic planning) ✅
+  9. Capability ROI Engine (what happens when you add this?) ✅
+  10. Capability Discovery (questionnaire → AI gaps) ✅
+  11. Capability Marketplace (hire for capabilities) ✅
+  12. Capability Wallet (portable evidence) ✅
+- TwinHire now has 50 components + 24 API routes.
+- Lint clean; all features browser-verified; pushed to GitHub.
