@@ -33,6 +33,7 @@ import { EvidenceExport } from "./EvidenceExport";
 import { AIBenchmarkPanel } from "./AIBenchmarkPanel";
 import { CounterfactualHiring } from "./CounterfactualHiring";
 import { MultiAgentEmployees } from "./MultiAgentEmployees";
+import { CapabilityRoiEngine } from "./CapabilityRoiEngine";
 import { cn } from "@/lib/utils";
 import type {
   BusinessTwinView,
@@ -442,6 +443,11 @@ export function EvidenceView({
         {/* Multi-agent employees */}
         <div className="mt-8">
           <MultiAgentEmployees />
+        </div>
+
+        {/* Capability ROI engine */}
+        <div className="mt-8">
+          <CapabilityRoiEngine />
         </div>
 
         {/* CTAs */}
